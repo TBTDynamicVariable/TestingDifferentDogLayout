@@ -103,6 +103,12 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         // Read preferences and set corresponding variables
         loadPreferenceForView();
 
+        toDogButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                toDogPart();
+            }
+        });
         analyzerViews = new AnalyzerViews(this);
 
         // travel Views, and attach ClickListener to the views that contain android:tag="select"
