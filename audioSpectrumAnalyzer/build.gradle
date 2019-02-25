@@ -1,0 +1,31 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
+    defaultConfig {
+        applicationId "github.bewantbe.audio_analyzer_for_android"
+        minSdkVersion 14
+        targetSdkVersion 27
+    }
+    buildTypes {
+        release {
+            // See https://developer.android.com/studio/build/shrink-code.html
+            // Remember to check <module-name>/build/outputs/mapping/release/
+            //   usage.txt   : code that was removed
+            //   mapping.txt : the translation between the original and obfuscated class, method, and field names
+            shrinkResources true
+            minifyEnabled true
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
+        }
+    }
+    productFlavors {
+    }
+}
+
+dependencies {
+    compile project(':FFTLibrary')
+    compile 'com.android.support:support-v4:27.0.2'
+    compile 'com.android.support:appcompat-v7:27.0.2'
+}

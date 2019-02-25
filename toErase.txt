@@ -1,0 +1,327 @@
+1. Remove the files that don't matter for our purposes
+2. Integrate the needed files into WowWee chip, 
+3. Be happy af
+
+Activities that definitely don't matter*:
+AnalyzeOneBufferForWz
+AnalyzerGraphic
+AxixTickLabels
+ColorMapArray
+FPSCounter
+GridLabel
+RangeViewDialogC
+ScreenPhysicalMapping
+SelectorText
+
+
+
+ACtivities that might matter:
+SpectrumPlot
+STFT
+
+SbNumFormat
+SpectrogramBMP
+SpectrogramPlot
+
+
+
+
+
+Definitely matters:
+AnalyzerParameters
+AnalyzerActivity
+AnalyzerUtil
+AnalyzerViews(Used by Sampling loop which matters, but the rest of it is aestetic nonsense. )
+besselCal
+CalibrationLoad
+InfoRecActivity
+MyPreferences
+RecorderMOnitor
+SamplingLoop
+SineGenerator
+
+
+
+
+________________________________________________________________________________________________
+              AnalyzeOneBufferForWz
+This is actually just empty, assumedly not implemented thing, can safely delete it with no problems
+
+
+
+
+________________________________________________________________________________________________
+              AnalyzerActivity
+  Direct depencencies:
+  - AnalyzerViews
+  - AnalyzerParameters
+  - AnalyzerGraphic
+  - Calibration load(225, )
+
+What matters: How we save files, how we call fft measure, analyze, and save - Very small part of this activity
+
+More detailed run through:
+Lines 0-122 - Initial and OnCreate function:
+Gets memory allocation for phone, relays that info to the user. Creates the view - and sets them using the AnalyzerParameters activity.
+
+Lines 130-144 - OnResume:
+Resumes operation, really. overwrites default on resume funcion, Starts sampling and loads the saved preferences gotted from initial run of app.
+
+Lines 146-154 - onPause:
+Overwrites standard, stops sampling, doesn't close window
+
+Through Line 195, we have android app functionality stuff. What happens when we open the program, close it, ect. Not exciting
+
+Line 196- 214 - selectFile: (Do not know where this function is ever called)
+Program looks at the users default filemanagement system. Error checks with toast. Has two modes, requesting audio file and calibration file
+
+Lines 225-238 - fillFftCalibration
+Gathers the data used for Fourier transform, uses both an AnalyzerParameter object and a CalibrationLoad one. This and the next function make heavy use of Log.(method) - need to do some reading up on log
+
+Lines 257 - 281 - Menu stuff:
+Almost defnitely some generated code through AS, Goes through various menu funcitonality, but this is code we can remove if we find settings that work best for our purposes. Simply hardcode the best settings for our robot.
+
+
+Lines 275 - 358 - Onlcick for AdapterView: TODO:
+This is a menu series for selection on the way the fft is taken and calculated - This code is a good deal more complicated, and susing out what we will be using will be a little more complicated that the stuff above, however, it can be hardcoded for us
+
+Lines 363-390 - LoadPrefForView:
+Takes the menu options the user used before and implement those when a new instance of the program is opened. For us, we need to figure out how to remove this code, not adapt it. We can hardcode the preferences we want in order to best record OUR audio. 
+
+
+Lines 392-463 - LoadPreferences:
+Much like above, LoadPrefForView, utilizes AnalyzerParameters, View, and Graphics. Graph view, spectrum display, all of the things I don't particularly care about. All visual part of the app, which I think we want to avoice, simply getting the utility of the app. 
+
+
+Lines 465-476 - stickToMEasureMode and Cancel Measure:
+These both make it so the probram has checks at certain points that require recording/measuring and displaying that data. 
+
+Lines 477-487 - IsInGraphV and shopPopUp:
+Another set of visual exclusive functions that we don't care too much about. Both functions make exclusive use of analyzerViews object.
+
+Lines 494 - 567  -  AnalyzerGestureListener:
+Detects certain phone sensors that depend on motion? I think? For the app, we are override an onDown motion event, so that the app does what we want it to, rather than what is typical for this happening. For instance, double tapping and holding down a button on screen have typical implementation, and the apps creator wanted to use a different functionality. 
+
+Lines 569 - 619 (- 677, really) - Various functions relating to user input:
+These all rever to user selection interactions with the audio analyzer app. For us, I think it best do make the user functionality.... A timed thing, or a button push (perhaps?) and then record the audio and analyze it. So this us not particularly important.
+
+
+Lines 679 - 684 - OnLongClick:
+Press and hold copies string of obj
+
+Lines 688 - 693 - onClick:
+overrides typical click function to also disregard the graph being displayed by analyzerViews
+
+Lines 695 - 735 - Setting up the graph to display sonogram:
+Stated above, gets graph ready for displaying the visualization of the audio being recorded. In the beginning it also sets up variables in order to save the data being recorded on the phone. @736 Audio sampling begins.  
+
+
+Lines 741 - 790 - Recording audio permissions: 
+In order to access parts of the android device NOT directly coded into the app, the android device must first ask user for the permissions. If the user gives them, we gucci, otherwise the app cannot perform its given directions. This part checks to make sure that the user HAS given permission. If they have not, the app tells them so and is like. "hey, please do the thing". Initial check @751 asks for audio permissions. @781, the same is done for storing information
+
+Lines 794 - 829 - Determins results, does a thing with them:
+What does it actually do to them? Well, it writes something to the log, and.... i Have no idea what that does yet. So, we'll figure it out eventually
+
+
+Lines 837 - 895 - Changes display mode of the graph:
+The graphs show an updated spectrogram, frequency scaling, or db plot. The views change dependin on that, as layed out in analyzerViews.graphView.(funciton). This function doesn't go into how the data is recorded, or how it is sent to the graph.
+
+Lines 895 - end - Visit and the like:
+These functions are that show the sub parts of the group - So, visiting a group, executing the command, I THINK thats how the Logs are used? Honestly, this part is a little beyond me rn. 
+
+
+
+________________________________________________________________________________________________
+            AnalyzerGraphic
+This class is all about the graph. 
+Dependancies:
+SpectrumPlot
+SpectrogramPlot
+
+This activity interacts with the two dependencies, Spectro_Plot and Spectru_Plot. They might be called from places outside of this, but both plots use this to get the information appropriate for those plots, and place that into the graphic window. Merely going to be removed, I assume. Doesn't seem like it will provide too much functionality for us, as we don't want to keep the graphic interface of that part of the app, just the computational and memory accessing functionality. Going through it is a pretty easy trace, the functions are not detailed.
+
+________________________________________________________________________________________________
+            AnalyzerParameters
+Class dependencies:
+None - This code is used by other 
+
+Lays out some of the more important functionality of the app - Sets up a lot of fourier variables and maths, gets audio source form computer
+
+Lines 26-41:
+Declaring variables - Asssuming this is used as analyzerParameter Objects in other places, and that is taken to obtain what operation is being performed by the program. 
+
+Lines 49 - end - getAudioSourceNameFromIdPrepare:
+You pass this a resource, it gets the string value from it, and then uses that string value as the audio source - and that is used when recording starts (BIG ASSUMPTION, I just don't know how else that will be used.)
+
+
+________________________________________________________________________________________________
+            AnalyzerUtil
+ - Lost a bunch of stuff. Really not thrilled about it. BUtt. whatever. I have a few hours. Lets do. 
+
+This is an important file. It does the pitch frequency conversion for the program, but some of that is purely aestetic. Doubt we'll be checking pitch against itself, rather the idea is to check frequencies with some level of tolerance. 
+
+Additionally, validate audio rates for the recording device. That and getting the audio source Id. Aroudn line 175, the functions AnalyzerUtil and GetAllAudioSource are part of the audio source checking and confirmation. 
+
+Lines 260-364
+A combination of binary search and the is sorted function perform important data analysis functions, goes to the important pile. 
+________________________________________________________________________________________________
+            AnalyzerViews
+Used by: Sampling Loop
+Uses:
+- so the default app has different modes you can select, depending on how you want the data displayed. This is the java file that manages most of that, and it's relevent to the project. 
+
+Lines 165-168 Might be useful to find where the function is called, as well as the following toast(error check part). We don't want to tell the end user that the file has been saved, but we do want to do it during error checking. And the function itself tells us where the path is saved, so we want to find where the string is found that is passed to the function. 
+
+The rest of these functions are mostly aestetic and do a lot of android specific manipulation of text boxes, pictures, and the like, buttons, popup menus, whatever. We don't care about it, 
+
+IMPORTNT: Sampling loop, which is a vital chunk of code for us, makes use of the notify save and toast functions from AnalyzerViews
+
+________________________________________________________________________________________________
+              AxisTickLabels
+ Used by:
+ Uses:
+ 
+ The graphs in android studio don't automatically have tick labels, so this chunk of code makes tick labels on the graph. We do not need. 
+
+
+
+________________________________________________________________________________________________
+            besselCaL
+The only damn file that makes any kind of sense. who capitalizes EVER letter? Real silly. Anyway. This stays.
+Includes a lot of the math that does the audio analysis. Works with "Chebyshev" Polynomials. Long story short, used by the app for analyzing recorded data. If we end up using tensor flow, this won't matter. 
+
+
+
+
+________________________________________________________________________________________________
+            Calibrationload
+Loads the calibration file. If that fily doesn't exist, we make a new calibration file. What do we use that file for, you ask? I haven't the slightest idea. Though a lot of information is pulled from it. 
+
+Keep file. 
+
+________________________________________________________________________________________________
+            ColorMapArray
+Literally a list of hex colors. Actually kind of silly. Gave me a good chuckle. 
+
+
+
+
+________________________________________________________________________________________________
+            FPSCounter
+This is a java file that aims to create an FPS counter. Not only is this aestetic only, it isn't actually implemented anywhere in the program. P sure we could just delete it and never have a problem. 
+
+
+
+________________________________________________________________________________________________
+            GridLabel
+
+
+Lines 0-138
+Starts off talking about the grid on which the waves are plotted. Different markers and value intervals are made depending on user selected setting of DB, or whatever. 
+Does not perform any proper computation or saving function, just lays out the grid for UI purposes. 
+
+
+
+________________________________________________________________________________________________
+            InfoRecActivity
+
+This tests the audio source, and reads data from it. Very importent. 
+
+Lines 41-51 - Two of these lines are strictly about the interface, with the set content and text view. Also the movement function. But setting up  a new analyzer util is important.
+
+
+56-100 - ui stuff, setting a back button and a menu, then back button utility override
+
+Lines 102-112 - On resume, every class tends too have this. Text result we will change to inner storage
+
+115 - No idea how AS uses threads
+
+117- 149 - Testing recorder, change text view to inner storage, or simply a box saying audio test worked
+
+
+142-150 - Same deal, setting textbox that displays to user, useful for bugtest
+
+
+158-END - This is what does the testing for the audio recorder: It reports it into the text box established in the beginning, which looks like it only is used for. Test is important for app functionallity, but changes to the text box it references will have to be made
+
+
+_________________________________________________________________________________________________
+              My Preferences
+This whole file is about user preferences, audio source, screen size. ect. The places where it deals with sampling rate       and audio source, we care about that but not the UI preferenes
+
+_________________________________________________________________________________________________
+            Range View dialog
+Deals with the plots, Utilizes AnalyzerActivity and AnalyzerGraphic
+
+It does a bit of math in the middle, but it's only done in order to find out the graph range for UI purposes. Given that we won't be displaying the waveform to the user, this isn't needed. 
+
+_________________________________________________________________________________________________
+             Recorder monitor
+Checks to see if the recorder is running. When it is seem to be running, void start() is called to log how long the sample is. 
+
+Lines 52 - 100 - Gets how many samples were taken, then when this function is called, from different files, that number is updated. Why do we need to know the sample's taken? I assume it's because it matters to know where we are in the recording, but that I haven't seen yet in the program. 
+
+_________________________________________________________________________________________________
+            sampling loop
+Utilizes:
+  - SineGenorator
+  - AnalyzerParameters
+  - Analyzer Acitivity
+From the file, "Read a snapshot of audio data at a regular interval, and compute the FFT" This file takes the FFt of a given sample and then....
+
+
+Start - line 68 - Declaring variables and including other classes defined within the program. Sets up the loop window with WORDDURATION_BEFORE and WORDDURATION_AFTER
+
+69 - 86: Sampling loop 
+ - Has  a pause button, then sets up the signal sources for testing, uses sine generator to show 
+
+Lines 89 - 115 - These are all about framerate and not interupting the sample loop when phones sleeps(?)
+
+Lines 120 - 146 - Gets sample data from test data made in lines 75ish. It then adds the sample data collected to mdata (where the temp data is stored)  then limits rate at which generated sine shows
+
+Lines 150 - 418 public void run() - This is what happens when you run the SamplingLoop run function. To start:
+ - Start time is established using the system clock, as well as end time, this is used to get 500ms intervals of sample data
+ - Gets sample size and error checks the minimum size of any of the samples. 
+
+216 - 224
+ - Next a chunk size is determined, as well as various other analysis metrics which are saved in string format within analyzerParam.
+ 
+ - Then we make a recorder obj, set some stft parameters
+ 
+ Lines 336 - end:
+  - This is where the information form the transforms is gathered and set. This is where we will (probably?) go to in order 
+  to access that info to see whether our signals match eachother
+
+
+________________________________________________________________________________________________
+            SBNumFormat:
+Honestly, I have no idea what this does. Someone else help? I'd just include it to not worry about it.
+
+
+
+________________________________________________________________________________________________
+            ScreenPhysicalMapping
+This is self exlanatory: when you display various elements on screen, you have to ensure everything is where you want it. That is the purpose of this code, and is not important to us. Mapping the screen will probably be a part of our end functionality, but not using this code. 
+
+
+
+________________________________________________________________________________________________
+             SelectorText
+Aestetics for menu text - not important for us
+
+
+________________________________________________________________________________________________
+            SineGenerator
+This is very important. Not only does it generate the sine wave for displaying, it also calculates some important aspects.
+
+
+________________________________________________________________________________________________
+            SpectrogramBMP
+This makes the picture to draw on the graph, or "canvas" as it's called in the code. There are parts here that are calculate data for the wave, and we can pull from that to get info for our comparisons
+
+________________________________________________________________________________________________
+            SpectrogramPlot
+Lost this - Basically it's mostly getting data from the plot go prep actual display of data. There are a few places thtat get data which could be useful for us, but we have to change the way in which it is seen. 
+
+Around line 352 is the important function for us
+            
