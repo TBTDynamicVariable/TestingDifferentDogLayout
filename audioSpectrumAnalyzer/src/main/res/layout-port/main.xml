@@ -18,11 +18,11 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp" >
+        android:layout_height="wrap_content" >
 
         <TextView
             android:id="@+id/textview_RMS"
-            android:visibility="invisible"
+            android:visibility="visible"
             android:layout_width="@dimen/textview_RMS_layout_width"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -33,6 +33,7 @@
 
         <TextView
             android:id="@+id/textview_cur"
+            android:visibility="visible"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -44,7 +45,7 @@
         <TextView
             android:id="@+id/textview_peak"
             android:layout_width="fill_parent"
-            android:visibility="invisible"
+            android:visibility="visible"
             android:layout_height="wrap_content"
             android:layout_below="@id/textview_cur"
             android:layout_toRightOf="@id/textview_RMS"
@@ -56,7 +57,7 @@
     <TextView
         android:id="@+id/textview_rec"
         android:layout_width="fill_parent"
-        android:visibility="invisible"
+        android:visibility="visible"
         android:layout_height="wrap_content"
         android:text="@string/textview_rec_text"
         android:typeface="monospace" />
@@ -190,6 +191,7 @@
 
     <Button
         android:id="@+id/toDog"
+        android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="Go To Dog"></Button>
