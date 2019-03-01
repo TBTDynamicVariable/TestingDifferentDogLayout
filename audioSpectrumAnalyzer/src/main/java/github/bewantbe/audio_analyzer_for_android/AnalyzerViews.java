@@ -42,6 +42,8 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+
 /**
  * Operate the views in the UI here.
  * Should run on UI thread in general.
@@ -62,7 +64,7 @@ class AnalyzerViews {
     private StringBuilder textPeak = new StringBuilder("");
     private StringBuilder textRec = new StringBuilder("");
     private char[] textRMSChar;   // for text in R.id.textview_RMS
-    private char[] textCurChar;   // for text in R.id.textview_cur
+    public static char[] textCurChar;   // for text in R.id.textview_cur
     private char[] textPeakChar;  // for text in R.id.textview_peak
     private char[] textRecChar;   // for text in R.id.textview_rec
 
@@ -508,4 +510,7 @@ class AnalyzerViews {
             }
         }
     };
+
+
+
 }
