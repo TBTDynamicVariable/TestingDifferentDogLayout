@@ -750,8 +750,9 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         samplingThread = new SamplingLoop(this, _analyzerParam);
         samplingThread.start();
         //put reward dog logic here
-        //if(AnalyzerViews.textCurChar[0]=='a')
-
+        if(AnalyzerViews.textCurChar[0]=='a'){
+            rewardDog();
+        }
 
     }
 
