@@ -750,8 +750,15 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         samplingThread = new SamplingLoop(this, _analyzerParam);
         samplingThread.start();
         //put reward dog logic here
-        rewardDog();
+        /*int counter = 0;
+        while(true) {
+            if (AnalyzerViews.textCurChar[counter] == 'a') {
+                rewardDog();
+            }
+            else{
+            counter=counter+1;}
 
+        }*/
     }
 
     // For call requestPermissions() after each showPermissionExplanation()
