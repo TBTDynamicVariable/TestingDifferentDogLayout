@@ -104,13 +104,7 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         // Read preferences and set corresponding variables
         loadPreferenceForView();
 
-        Button toDogButton = (Button) findViewById(R.id.toDog);
-        toDogButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                toDogPart();
-            }
-        });
+
         analyzerViews = new AnalyzerViews(this);
 
         // travel Views, and attach ClickListener to the views that contain android:tag="select"
@@ -948,8 +942,5 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         Log.v(TAG, "ready()");
         analyzerViews.invalidateGraphView();
     }
-    public void toDogPart(){
-        Intent intent = new Intent(this, toDogActivity.class);
-        startActivity(intent);
-    }
+
 }
