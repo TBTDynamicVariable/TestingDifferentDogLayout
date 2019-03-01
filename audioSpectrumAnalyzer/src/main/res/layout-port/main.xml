@@ -20,12 +20,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp" >
 
-        <Button
-            android:id="@+id/toDog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Go To Dog"></Button>
-
         <TextView
             android:id="@+id/textview_RMS"
             android:visibility="invisible"
@@ -193,5 +187,11 @@
 
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/toDog"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Go To Dog"></Button>
 
 </LinearLayout>

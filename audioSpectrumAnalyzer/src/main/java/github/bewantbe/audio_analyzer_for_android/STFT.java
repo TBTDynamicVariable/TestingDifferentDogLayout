@@ -433,7 +433,7 @@ class STFT {
     double getPeakAmpl_dB(int freqOfPeak) {
         int indexFreq=1;
         if(freqOfPeak>=0)  indexFreq =(freqOfPeak* fftLen) / sampleRate;//convert freq to indexFreq in freq domain: freq=sampleRate/2 corresponds to spectrumAmpOut.Length;
-        double x1 = spectrumAmpOutDB[indexFreq-1];
+        double x1 = spectrumAmpOutDB[indexFreq];
         double x2 = spectrumAmpOutDB[indexFreq];
         double x3 = spectrumAmpOutDB[indexFreq+1];
         return (x1+x2+x3)/3;
