@@ -7,23 +7,23 @@
 
     <view
         android:id="@+id/plot"
-        android:layout_width="0dp"
-        android:visibility="invisible"
+        android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="0.32"
         class="github.bewantbe.audio_analyzer_for_android.AnalyzerGraphic"
         custom:cutoffDb="-25"
         custom:sampleRate="16000" />
 
-    <Button
-        android:id="@+id/toDog"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Go To Dog" />
 
     <RelativeLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/toDog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Go To Dog"></Button>
 
         <TextView
             android:id="@+id/textview_RMS"

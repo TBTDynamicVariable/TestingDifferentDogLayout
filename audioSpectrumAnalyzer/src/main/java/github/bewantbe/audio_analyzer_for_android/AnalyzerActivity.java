@@ -60,13 +60,14 @@ import android.widget.Toast;
  * @author suhler@google.com (Stephen Uhler)
  */
 
+
 public class AnalyzerActivity extends Activity          // AnalyzerActivity is directly linked to AnalyzerGraphic.Readyghbnnn
     implements OnLongClickListener, OnClickListener,
                OnItemClickListener, AnalyzerGraphic.Ready
 {
     private static final String TAG="AnalyzerActivity:";
 
-    Button toDogButton = (Button) findViewById(R.id.toDog);
+
     AnalyzerViews analyzerViews;                        // Also direct depencency on AnalyzerViews
     SamplingLoop samplingThread = null;
     private RangeViewDialogC rangeViewDialogC;
@@ -103,6 +104,7 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         // Read preferences and set corresponding variables
         loadPreferenceForView();
 
+        Button toDogButton = (Button) findViewById(R.id.toDog);
         toDogButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
