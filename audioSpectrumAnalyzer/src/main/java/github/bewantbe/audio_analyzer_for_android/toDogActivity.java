@@ -30,10 +30,10 @@ import java.util.List;
 public class toDogActivity extends AppCompatActivity {
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        if (container == null)
-            return null;
+    public void onCreate(Bundle savedInstances) {
+
+        super.onCreate(savedInstances);
+        setContentView(R.layout.todog);
 
         final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
