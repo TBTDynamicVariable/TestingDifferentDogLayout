@@ -1,5 +1,6 @@
 package github.bewantbe.audio_analyzer_for_android;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -8,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,7 +29,13 @@ import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobotFinder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class toDogActivity extends AppCompatActivity {
+public class toDogActivity extends Activity {
+
+    private static final int REQUEST_ENABLE_BT = 1;
+    private BluetoothAdapter mBluetoothAdapter;
+    private Handler handler;
+    private ListView listView;
+    List<String> robotNameList;
 
     @Override
     public void onCreate(Bundle savedInstances) {
@@ -42,17 +50,17 @@ public class toDogActivity extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
 
-        getActivity().getWindow().getDecorView().setSystemUiVisibility(flags);
+        //getActivity().getWindow().getDecorView().setSystemUiVisibility(flags);
 
 
-        View view = inflater.inflate(R.layout.fragment_connect, container, false);
+        //View view = inflater.inflate(R.layout.fragment_connect, container, false);
 
-        listView = (ListView)view.findViewById(R.id.connectionTable);
+        listView = (ListView)findViewById(R.id.connectionTable);
         String[] robotNameArr = {"Please turn on CHIP"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, robotNameArr);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, robotNameArr);
         listView.setAdapter(adapter);
 
-        Button refreshBtn = (Button)view.findViewById(R.id.refreshBtn);
+        Button refreshBtn = (Button)findViewById(R.id.refreshBtn);
         refreshBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,7 +82,7 @@ public class toDogActivity extends AppCompatActivity {
                     for (ChipRobot robot : (List<ChipRobot>) ChipRobotFinder.getInstance().getChipFoundList()) {
                         if (robot.getName().contentEquals(targetRobotName)) {
                             final ChipRobot connectChipRobot = robot;
-                            getActivity().runOnUiThread(new Runnable() {
+                            runOnUiThread(new Runnable() {
                                 public void run() {
                                     connect(connectChipRobot);
                                     // Stop scan Chip
@@ -87,13 +95,11 @@ public class toDogActivity extends AppCompatActivity {
                 }
             }
         });
-
-        return view;
     }
 
     void connect(ChipRobot robot) {
-        robot.setCallbackInterface(this);
-        robot.connect(getActivity());
+        robot.setCallbackInterface((ChipRobot.ChipRobotInterface) this);
+        robot.connect(this);
     }
 
     @Override
@@ -101,7 +107,7 @@ public class toDogActivity extends AppCompatActivity {
         super.onResume();
 
         // Register ChipRobotFinder broadcast receiver
-        this.getActivity().registerReceiver(mChipFinderBroadcastReceiver, ChipRobotFinder.getChipRobotFinderIntentFilter());
+        this.registerReceiver(mChipFinderBroadcastReceiver, ChipRobotFinder.getChipRobotFinderIntentFilter());
 
         // Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
         // fire an intent to display a dialog asking the user to grant permission to enable it.
@@ -126,15 +132,15 @@ public class toDogActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        this.getActivity().unregisterReceiver(mChipFinderBroadcastReceiver);
+        this.unregisterReceiver(mChipFinderBroadcastReceiver);
         scanLeDevice(false);
     }
 
     private void initBluetooth(){
-        final BluetoothManager bluetoothManager = (BluetoothManager) this.getActivity().getSystemService(Context.BLUETOOTH_SERVICE);
+        final BluetoothManager bluetoothManager = (BluetoothManager) this.getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
         ChipRobotFinder.getInstance().setBluetoothAdapter(mBluetoothAdapter);
-        ChipRobotFinder.getInstance().setApplicationContext(this.getActivity());
+        ChipRobotFinder.getInstance().setApplicationContext(this);
     }
 
     private void scanLeDevice(final boolean enable) {
@@ -161,7 +167,7 @@ public class toDogActivity extends AppCompatActivity {
             robotNameArr = new String[1];
             robotNameArr[0] = "Please turn on CHIP";
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, robotNameArr);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, robotNameArr);
         listView.setAdapter(adapter);
     }
 
@@ -177,4 +183,4 @@ public class toDogActivity extends AppCompatActivity {
                 updateChipList();
             }
         }
-    }};
+    };}

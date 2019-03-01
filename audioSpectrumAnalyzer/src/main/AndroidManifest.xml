@@ -17,6 +17,7 @@
 
 
     <application
+        tools:replace="android:icon"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@drawable/icon"

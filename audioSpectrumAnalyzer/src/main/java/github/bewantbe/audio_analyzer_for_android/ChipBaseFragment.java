@@ -1,5 +1,4 @@
-package com.wowwee.chip_android_sampleproject.fragment;
-
+package github.bewantbe.audio_analyzer_for_android;
 import android.support.v4.app.Fragment;
 
 import com.wowwee.bluetoothrobotcontrollib.BluetoothRobotConstants;
