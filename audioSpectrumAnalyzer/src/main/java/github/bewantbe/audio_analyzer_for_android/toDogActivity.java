@@ -89,6 +89,7 @@ public class toDogActivity extends Activity {
                                     scanLeDevice(false);
                                 }
                             });
+                            openAnalyzerActivity();
                             break;
                         }
                     }
@@ -183,4 +184,13 @@ public class toDogActivity extends Activity {
                 updateChipList();
             }
         }
-    };}
+    };
+
+
+
+
+    public void openAnalyzerActivity(){
+            Intent intent = new Intent(this,AnalyzerActivity.class);
+    startActivity(intent);
+    }
+}

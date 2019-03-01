@@ -737,7 +737,8 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
 
         // Start sampling
         samplingThread = new SamplingLoop(this, _analyzerParam);
-        samplingThread.start();
+        samplingThread.start();//put reward dog logic here
+
     }
 
     // For call requestPermissions() after each showPermissionExplanation()
