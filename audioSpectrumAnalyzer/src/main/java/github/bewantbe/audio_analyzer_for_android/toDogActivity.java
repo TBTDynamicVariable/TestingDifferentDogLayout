@@ -90,13 +90,13 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
                                     scanLeDevice(false);
                                 }
                             });
+                            openAnalyzerActivity();
                             break;
                         }
                     }
                 }
             }
         });
-        openAnalyzerActivity();
     }
 
     void connect(ChipRobot robot) {
