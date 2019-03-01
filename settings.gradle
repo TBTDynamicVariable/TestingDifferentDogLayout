@@ -1,2 +1,3 @@
 include ':FFTLibrary'
+include ':app'
 include ':audioSpectrumAnalyzer'
