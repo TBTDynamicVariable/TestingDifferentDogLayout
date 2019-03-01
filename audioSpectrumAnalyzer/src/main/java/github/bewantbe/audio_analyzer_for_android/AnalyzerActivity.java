@@ -74,6 +74,7 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
     private GestureDetectorCompat mDetector;
 
     private AnalyzerParameters analyzerParam = null;    // Same with params
+    String currentIndicator;
 
     double dtRMS = 0;
     double dtRMSFromFT = 0;
@@ -106,6 +107,8 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
 
 
         analyzerViews = new AnalyzerViews(this);
+
+       // currentIndicator = analyzerViews attempting to get stuff TODO: as before
 
         // travel Views, and attach ClickListener to the views that contain android:tag="select"
         visit((ViewGroup) analyzerViews.graphView.getRootView(), new Visit() {

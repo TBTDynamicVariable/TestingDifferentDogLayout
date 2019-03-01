@@ -31,6 +31,7 @@ import java.util.List;
 
 public class toDogActivity extends Activity {
 
+    ChipBaseFragment baseFragmentReady;
     private static final int REQUEST_ENABLE_BT = 1;
     private BluetoothAdapter mBluetoothAdapter;
     private Handler handler;
@@ -191,6 +192,6 @@ public class toDogActivity extends Activity {
 
     public void openAnalyzerActivity(){
             Intent intent = new Intent(this,AnalyzerActivity.class);
-    startActivity(intent);
+            startActivity(intent);
     }
 }
