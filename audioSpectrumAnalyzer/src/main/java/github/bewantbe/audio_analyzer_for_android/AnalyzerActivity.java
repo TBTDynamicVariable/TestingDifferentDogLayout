@@ -55,6 +55,12 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Random;
+
+import com.wowwee.bluetoothrobotcontrollib.chip.ChipCommandValues;
+import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobot;
+import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobotFinder;
+
 /**
  * Audio "FFT" analyzer.
  * @author suhler@google.com (Stephen Uhler)
@@ -87,6 +93,8 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
     volatile boolean bSaveWav = true;//false;AV
 
     CalibrationLoad calibLoad = new CalibrationLoad();  // data for calibration of spectrum
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -740,7 +748,10 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
 
         // Start sampling
         samplingThread = new SamplingLoop(this, _analyzerParam);
-        samplingThread.start();//put reward dog logic here
+        samplingThread.start();
+        //put reward dog logic here
+        //if(AnalyzerViews.textCurChar[0]=='a')
+
 
     }
 
@@ -945,6 +956,40 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         // put code here for the moment that graph size just changed
         Log.v(TAG, "ready()");
         analyzerViews.invalidateGraphView();
+    }
+
+
+    public void rewardDog(){
+        if (ChipRobotFinder.getInstance().getChipRobotConnectedList().size() > 0) {
+            ChipRobot robot = (ChipRobot) ChipRobotFinder.getInstance().getChipRobotConnectedList().get(0);
+            //Play animation 5 = dance
+            //Play sound 110 =  demo music 2
+            //Play sound 111 = demo music 3
+
+            Random rand = new Random();
+            int randomValue = rand.nextInt(3);
+            if (randomValue == 0){
+                robot.chipPlayBodycon((byte)(5));
+            }
+            else if (randomValue == 1){
+                ChipCommandValues.kChipSoundFileValue value = ChipCommandValues.kChipSoundFileValue.kChipSoundFile_None;
+                value.setValue(110);
+                robot.chipPlaySound(value);
+            }
+            else {
+                ChipCommandValues.kChipSoundFileValue value = ChipCommandValues.kChipSoundFileValue.kChipSoundFile_None;
+                value.setValue(111);
+                robot.chipPlaySound(value);
+            }
+            try {
+                Thread.sleep(7000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            //Reset dog
+            robot.chipPlayBodycon((byte)(1));
+            robot.chipStopSound();
+        }
     }
 
 }
