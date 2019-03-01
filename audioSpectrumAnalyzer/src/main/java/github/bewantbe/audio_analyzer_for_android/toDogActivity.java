@@ -29,7 +29,7 @@ import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobotFinder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class toDogActivity extends Activity {
+public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterface {
 
     ChipBaseFragment baseFragmentReady;
     private static final int REQUEST_ENABLE_BT = 1;
@@ -58,7 +58,7 @@ public class toDogActivity extends Activity {
 
         listView = (ListView)findViewById(R.id.connectionTable);
         String[] robotNameArr = {"Please turn on CHIP"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, robotNameArr);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(toDogActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, robotNameArr);
         listView.setAdapter(adapter);
 
         Button refreshBtn = (Button)findViewById(R.id.refreshBtn);
@@ -83,25 +83,25 @@ public class toDogActivity extends Activity {
                     for (ChipRobot robot : (List<ChipRobot>) ChipRobotFinder.getInstance().getChipFoundList()) {
                         if (robot.getName().contentEquals(targetRobotName)) {
                             final ChipRobot connectChipRobot = robot;
-                            runOnUiThread(new Runnable() {
+                            toDogActivity.this.runOnUiThread(new Runnable() {
                                 public void run() {
                                     connect(connectChipRobot);
                                     // Stop scan Chip
                                     scanLeDevice(false);
                                 }
                             });
-                            openAnalyzerActivity();
                             break;
                         }
                     }
                 }
             }
         });
+        openAnalyzerActivity();
     }
 
     void connect(ChipRobot robot) {
-        robot.setCallbackInterface((ChipRobot.ChipRobotInterface) this);
-        robot.connect(this);
+        robot.setCallbackInterface(this);
+        robot.connect(toDogActivity.this);
     }
 
     @Override
@@ -193,5 +193,60 @@ public class toDogActivity extends Activity {
     public void openAnalyzerActivity(){
             Intent intent = new Intent(this,AnalyzerActivity.class);
             startActivity(intent);
+    }
+
+    @Override
+    public void chipDeviceReady(ChipRobot chipRobot) {
+
+    }
+
+    @Override
+    public void chipDeviceDisconnected(ChipRobot chipRobot) {
+
+    }
+
+    @Override
+    public void chipDidReceiveVolumeLevel(ChipRobot chipRobot, byte b) {
+
+    }
+
+    @Override
+    public void chipDidReceivedBatteryLevel(ChipRobot chipRobot, float v, byte b, byte b1) {
+
+    }
+
+    @Override
+    public void chipDidReceiveDogVersionWithBodyHardware(int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8, int i9) {
+
+    }
+
+    @Override
+    public void chipDidSendAdultOrKidSpeed() {
+
+    }
+
+    @Override
+    public void chipDidReceiveAdultOrKidSpeed(byte b) {
+
+    }
+
+    @Override
+    public void chipDidReceiveEyeRGBBrightness(byte b) {
+
+    }
+
+    @Override
+    public void chipDidReceiveCurrentClock(int i, int i1, int i2, int i3, int i4, int i5, int i6) {
+
+    }
+
+    @Override
+    public void chipDidReceiveCurrentAlarm(int i, int i1, int i2, int i3, int i4) {
+
+    }
+
+    @Override
+    public void chipDidReceiveBodyconStatus(int i) {
+
     }
 }
