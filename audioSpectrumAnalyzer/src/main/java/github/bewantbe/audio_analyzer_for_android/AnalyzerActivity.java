@@ -982,40 +982,17 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
     }
 
 
-    public void rewardDog(){
+    public void rewardDog() {
         if (ChipRobotFinder.getInstance().getChipRobotConnectedList().size() > 0) {
             ChipRobot robot = (ChipRobot) ChipRobotFinder.getInstance().getChipRobotConnectedList().get(0);
             //Play animation 5 = dance
             //Play sound 110 =  demo music 2
             //Play sound 111 = demo music 3
 
-            robot.chipPlayBodycon((byte)(5));
+            robot.chipPlayBodycon((byte) (1));
 
 
-            Random rand = new Random();
-            int randomValue = rand.nextInt(3);
-            if (randomValue == 0){
-                robot.chipPlayBodycon((byte)(5));
-            }
-            else if (randomValue == 1){
-                ChipCommandValues.kChipSoundFileValue value = ChipCommandValues.kChipSoundFileValue.kChipSoundFile_None;
-                value.setValue(110);
-               // robot.chipPlaySound(value);
-            }
-            else {
-                ChipCommandValues.kChipSoundFileValue value = ChipCommandValues.kChipSoundFileValue.kChipSoundFile_None;
-                value.setValue(111);
-               // robot.chipPlaySound(value);
-            }
-            try {
-                Thread.sleep(7000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            //Reset dog
-            robot.chipPlayBodycon((byte)(1));
-            robot.chipStopSound();
         }
-    }
 
+    }
 }
