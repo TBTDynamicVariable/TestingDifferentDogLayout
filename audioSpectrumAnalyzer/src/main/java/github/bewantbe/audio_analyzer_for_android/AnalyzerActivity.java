@@ -991,7 +991,7 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
 
             robot.chipPlayBodycon((byte)(5));
 
-/*
+
             Random rand = new Random();
             int randomValue = rand.nextInt(3);
             if (randomValue == 0){
@@ -1000,13 +1000,13 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
             else if (randomValue == 1){
                 ChipCommandValues.kChipSoundFileValue value = ChipCommandValues.kChipSoundFileValue.kChipSoundFile_None;
                 value.setValue(110);
-                robot.chipPlaySound(value);
+               // robot.chipPlaySound(value);
             }
             else {
                 ChipCommandValues.kChipSoundFileValue value = ChipCommandValues.kChipSoundFileValue.kChipSoundFile_None;
                 value.setValue(111);
-                robot.chipPlaySound(value);
-            }*/
+               // robot.chipPlaySound(value);
+            }
             try {
                 Thread.sleep(7000);
             } catch (InterruptedException e) {

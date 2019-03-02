@@ -402,6 +402,7 @@ class AnalyzerViews {
         textCur.getChars(0, Math.min(textCur.length(), textCurChar.length), textCurChar, 0);
         ((TextView) activity.findViewById(R.id.textview_cur)).setText(textCurChar, 0, Math.min(textCur.length(), textCurChar.length));
         test=textCurChar.toString();
+        setCurText();
     }
 
     private void refreshRMSLabel(double dtRMSFromFT) {
@@ -488,7 +489,7 @@ class AnalyzerViews {
                 refreshPeakLabel(activity.maxAmpFreq, activity.maxAmpDB);
             if ((viewMask & VIEW_MASK_CursorLabel) != 0)
                 refreshCursorLabel();
-                setCurText();
+
             if ((viewMask & VIEW_MASK_RecTimeLable) != 0 && activity.samplingThread != null)
                 refreshRecTimeLable(activity.samplingThread.wavSec, activity.samplingThread.wavSecRemain);
         } else {
@@ -524,8 +525,8 @@ class AnalyzerViews {
 
     private void setCurText(){
         ((TextView) activity.findViewById(R.id.testingLetter)).setText(textCurChar, 0, Math.min(textCur.length(), textCurChar.length));
-        if (isATextCur.length() > 10){
-            if (isATextCur.substring(0,10).contains("a")){
+        if (textCur.length() > 5){
+            if (textCur.substring(0,5).contains("aaa")){
                 activity.rewardDog();
             }
 
