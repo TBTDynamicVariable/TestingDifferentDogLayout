@@ -993,7 +993,7 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
             int randomValue = rand.nextInt(3);
             if (randomValue == 0){
                 robot.chipPlayBodycon((byte)(5));
-            }
+            }/*
             else if (randomValue == 1){
                 ChipCommandValues.kChipSoundFileValue value = ChipCommandValues.kChipSoundFileValue.kChipSoundFile_None;
                 value.setValue(110);
@@ -1003,7 +1003,7 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
                 ChipCommandValues.kChipSoundFileValue value = ChipCommandValues.kChipSoundFileValue.kChipSoundFile_None;
                 value.setValue(111);
                 robot.chipPlaySound(value);
-            }
+            }*/
             try {
                 Thread.sleep(7000);
             } catch (InterruptedException e) {
