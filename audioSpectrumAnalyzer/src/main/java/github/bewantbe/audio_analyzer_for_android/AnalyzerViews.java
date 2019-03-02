@@ -524,7 +524,7 @@ class AnalyzerViews {
 
     private void setCurText(){
         ((TextView) activity.findViewById(R.id.testingLetter)).setText(textCurChar, 0, Math.min(textCur.length(), textCurChar.length));
-        if (isATextCur.contains("a")){
+        if (isATextCur.substring(0,10).contains("a")){
             activity.rewardDog();
         }
 
