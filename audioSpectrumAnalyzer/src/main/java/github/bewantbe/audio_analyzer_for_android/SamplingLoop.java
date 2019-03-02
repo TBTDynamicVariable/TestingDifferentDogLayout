@@ -340,7 +340,7 @@ class SamplingLoop extends Thread {
                 int freqOfPeak1=stft.getIndexOfPeakFreq(200, 800); //classIndicator = "maxFreq=" + String.valueOf(maxFreq);//Log.i(TAG,String.valueOf(spectrumDB[100])+"; "+String.valueOf(spectrumDB[101])+"; "+String.valueOf(spectrumDB[102])+"; "+String.valueOf(spectrumDB[103])+"; "+String.valueOf(spectrumDB[104])+"; "+String.valueOf(spectrumDB[105]));
                 int freqOfPeak2=stft.getIndexOfPeakFreq(800, 1800);
                 int freqOfPeak3=stft.getIndexOfPeakFreq(1800,3500);
-                double mean = stft.getMeanPSD_dB(300,3500);
+                double mean = stft.getMeanPSD_dB(300,3500); // 300
                 double max1 = stft.getPeakAmpl_dB(freqOfPeak1);
                 double max2 = stft.getPeakAmpl_dB(freqOfPeak2);
                 double max3 = stft.getPeakAmpl_dB(freqOfPeak3);
