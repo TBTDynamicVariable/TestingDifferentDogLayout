@@ -989,7 +989,6 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
             //Play sound 110 =  demo music 2
             //Play sound 111 = demo music 3
 
-
             Random rand = new Random();
             int randomValue = rand.nextInt(3);
             if (randomValue == 0){
@@ -997,12 +996,12 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
             }
             else if (randomValue == 1){
                 ChipCommandValues.kChipSoundFileValue value = ChipCommandValues.kChipSoundFileValue.kChipSoundFile_None;
-                value.setValue(0);
+                value.setValue(110);
                 robot.chipPlaySound(value);
             }
             else {
                 ChipCommandValues.kChipSoundFileValue value = ChipCommandValues.kChipSoundFileValue.kChipSoundFile_None;
-                value.setValue(0);
+                value.setValue(111);
                 robot.chipPlaySound(value);
             }
             try {
