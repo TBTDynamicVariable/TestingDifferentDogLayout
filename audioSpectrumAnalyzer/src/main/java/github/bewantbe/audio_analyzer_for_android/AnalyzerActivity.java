@@ -56,6 +56,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Random;
+import java.lang.String;
 
 import com.wowwee.bluetoothrobotcontrollib.chip.ChipCommandValues;
 import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobot;
@@ -750,7 +751,23 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         samplingThread = new SamplingLoop(this, _analyzerParam);
         samplingThread.start();
         //put reward dog logic here
-        /*int counter = 0;
+
+        //trial 2
+        int counter = 0;
+
+        if(AnalyzerViews.test.contains("a")){
+            counter=counter+1;}
+
+            if(counter>=1){
+                rewardDog();
+                counter = 0;
+            }
+
+
+
+        //trial 1
+        /*
+        int counter = 0;
         while(true) {
             if (AnalyzerViews.textCurChar[counter] == 'a') {
                 rewardDog();

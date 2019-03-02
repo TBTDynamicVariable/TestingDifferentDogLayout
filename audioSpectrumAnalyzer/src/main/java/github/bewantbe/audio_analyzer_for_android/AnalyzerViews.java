@@ -59,7 +59,7 @@ class AnalyzerViews {
     private float listItemTitleTextSize = 12;   // see R.dimen.button_text_small_fontsize
     private double fpsLimit = 8;
 
-    private StringBuilder textCur = new StringBuilder("");  // for textCurChar
+    public static StringBuilder textCur = new StringBuilder("");  // for textCurChar
     private StringBuilder textRMS  = new StringBuilder("");
     private StringBuilder textPeak = new StringBuilder("");
     private StringBuilder textRec = new StringBuilder("");
@@ -67,6 +67,8 @@ class AnalyzerViews {
     public static char[] textCurChar;   // for text in R.id.textview_cur
     private char[] textPeakChar;  // for text in R.id.textview_peak
     private char[] textRecChar;   // for text in R.id.textview_rec
+
+    public static String test;
 
     PopupWindow popupMenuSampleRate;
     PopupWindow popupMenuFFTLen;
@@ -392,6 +394,7 @@ class AnalyzerViews {
         */
         textCur.getChars(0, Math.min(textCur.length(), textCurChar.length), textCurChar, 0);
         ((TextView) activity.findViewById(R.id.textview_cur)).setText(textCurChar, 0, Math.min(textCur.length(), textCurChar.length));
+        test=textCurChar.toString();
     }
 
     private void refreshRMSLabel(double dtRMSFromFT) {
