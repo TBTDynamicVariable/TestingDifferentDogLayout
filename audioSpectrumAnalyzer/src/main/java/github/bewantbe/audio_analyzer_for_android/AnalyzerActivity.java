@@ -989,11 +989,14 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
             //Play sound 110 =  demo music 2
             //Play sound 111 = demo music 3
 
+            robot.chipPlayBodycon((byte)(5));
+
+/*
             Random rand = new Random();
             int randomValue = rand.nextInt(3);
             if (randomValue == 0){
                 robot.chipPlayBodycon((byte)(5));
-            }/*
+            }
             else if (randomValue == 1){
                 ChipCommandValues.kChipSoundFileValue value = ChipCommandValues.kChipSoundFileValue.kChipSoundFile_None;
                 value.setValue(110);
