@@ -113,5 +113,6 @@
     <string name="preference_developerSetting">Developer Settings</string>
     <string name="preference_spectrogramLogPlotMethod_1">Replot spectrogram only while zooming (Saves battery)</string>
     <string name="preference_spectrogramLogPlotMethod_2">Log plot: Replot on zoom</string>
+    <string name="testingString">testCar</string>
 
 </resources>

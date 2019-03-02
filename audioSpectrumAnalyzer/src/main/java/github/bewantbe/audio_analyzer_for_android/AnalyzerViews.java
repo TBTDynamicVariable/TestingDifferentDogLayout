@@ -63,10 +63,15 @@ class AnalyzerViews {
     private StringBuilder textRMS  = new StringBuilder("");
     private StringBuilder textPeak = new StringBuilder("");
     private StringBuilder textRec = new StringBuilder("");
+
+    TextView testingChar;
+
+
     private char[] textRMSChar;   // for text in R.id.textview_RMS
     public static char[] textCurChar;   // for text in R.id.textview_cur
     private char[] textPeakChar;  // for text in R.id.textview_peak
     private char[] textRecChar;   // for text in R.id.textview_rec
+    public static String isATextCur;
 
     public static String test;
 
@@ -89,6 +94,8 @@ class AnalyzerViews {
         textCurChar  = new char[res.getString(R.string.textview_cur_text).length()];
         textRecChar  = new char[res.getString(R.string.textview_rec_text).length()];
         textPeakChar = new char[res.getString(R.string.textview_peak_text).length()];
+        isATextCur = res.getString(R.string.testingString);
+
 
         /// initialize pop up window items list
         // http://www.codeofaninja.com/2013/04/show-listview-as-drop-down-android.html
@@ -481,6 +488,7 @@ class AnalyzerViews {
                 refreshPeakLabel(activity.maxAmpFreq, activity.maxAmpDB);
             if ((viewMask & VIEW_MASK_CursorLabel) != 0)
                 refreshCursorLabel();
+                setCurText();
             if ((viewMask & VIEW_MASK_RecTimeLable) != 0 && activity.samplingThread != null)
                 refreshRecTimeLable(activity.samplingThread.wavSec, activity.samplingThread.wavSecRemain);
         } else {
@@ -514,6 +522,12 @@ class AnalyzerViews {
         }
     };
 
+    private void setCurText(){
+        ((TextView) activity.findViewById(R.id.testingLetter)).setText(textCurChar, 0, Math.min(textCur.length(), textCurChar.length));
+        if (isATextCur.contains("a")){
+            activity.rewardDog();
+        }
 
+    }
 
 }

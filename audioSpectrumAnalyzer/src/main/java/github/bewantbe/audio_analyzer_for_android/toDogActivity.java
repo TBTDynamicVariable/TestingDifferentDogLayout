@@ -1,15 +1,22 @@
 package github.bewantbe.audio_analyzer_for_android;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.Manifest;
 
 
 import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobot;
@@ -33,10 +41,13 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
 
     ChipBaseFragment baseFragmentReady;
     private static final int REQUEST_ENABLE_BT = 1;
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private BluetoothAdapter mBluetoothAdapter;
     private Handler handler;
     private ListView listView;
     List<String> robotNameList;
+    LocationManager locationManager;
+    String provider;
 
     @Override
     public void onCreate(Bundle savedInstances) {
@@ -60,6 +71,7 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
         String[] robotNameArr = {"Please turn on CHIP"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(toDogActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, robotNameArr);
         listView.setAdapter(adapter);
+        checkLocationPermission();
 
         Button refreshBtn = (Button)findViewById(R.id.refreshBtn);
         refreshBtn.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +83,10 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
                 scanLeDevice(true);
             }
         });
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        provider = locationManager.getBestProvider(new Criteria(), false);
 
         this.initBluetooth();
 
@@ -249,4 +265,21 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
     public void chipDidReceiveBodyconStatus(int i) {
 
     }
+    public boolean checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 }

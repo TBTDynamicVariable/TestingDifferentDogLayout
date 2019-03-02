@@ -753,7 +753,7 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         //put reward dog logic here
 
         //trial 2
-        int counter = 0;
+       /* int counter = 0;
 
         if(AnalyzerViews.test.contains("a")){
             counter=counter+1;}
@@ -761,7 +761,7 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
             if(counter>=1){
                 rewardDog();
                 counter = 0;
-            }
+            }*/
 
 
 
