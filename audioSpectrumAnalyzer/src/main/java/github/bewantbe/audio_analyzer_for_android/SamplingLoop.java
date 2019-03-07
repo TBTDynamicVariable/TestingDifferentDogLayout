@@ -53,6 +53,7 @@ class SamplingLoop extends Thread {
 
     volatile double wavSecRemain;
     volatile double wavSec = 0;
+    public double peak3Ratio3Chunks;
 
     /**************AV Definitions Start*******************************************************/
     private static final int WORDDURATION_AFTERDETECTION = 1100;//milliseconds. We will keep recording sound for this duration after the fist vocalization is detected. Please keep to the minimum to reduce delay in reward.
@@ -63,7 +64,11 @@ class SamplingLoop extends Thread {
     private double[] rmsHistory;
     private static final int THRESHOLDBUFFERDURATION = 1000;// millisecons = 1sec
     public static StringBuilder  classIndicator = new StringBuilder("-");//this is used to indicate each chunk's classification for the presence of vocalization
-    private final boolean bReportAnalysis=false;
+    //private final boolean bReportAnalysis=true;
+
+    private final boolean bRecordChildOnly=true;//based on the valu of peak3Ration over three buffers
+    private double[] peak3RatioHistory;
+    private final int THRESHOLD_PEAK3_RATIO_DB=50;
     /**************AV Definitions End*******************************************************/
 
     SamplingLoop(AnalyzerActivity _activity, AnalyzerParameters _analyzerParam) {
@@ -178,9 +183,9 @@ class SamplingLoop extends Thread {
         // Determine size of buffers for AudioRecord and AudioRecord::read()
         int readChunkSize = analyzerParam.hopLen;  // Every hopLen one fft result (overlapped analyze window)
         readChunkSize = Math.min(readChunkSize, 2048);  // read in a smaller chunk, hopefully smaller delay
-        int bufferSampleSize = Math.max(minBytes / analyzerParam.BYTE_OF_SAMPLE, analyzerParam.fftLen/2) * 2;
+        int bufferSampleSize = Math.max(minBytes / analyzerParam.BYTE_OF_SAMPLE, analyzerParam.fftLen / 2) * 2;
         // tolerate up to about 1 sec.
-        bufferSampleSize = (int)Math.ceil(1.0 * analyzerParam.sampleRate / bufferSampleSize) * bufferSampleSize;
+        bufferSampleSize = (int) Math.ceil(1.0 * analyzerParam.sampleRate / bufferSampleSize) * bufferSampleSize;
 
         // Use the mic with AGC turned off. e.g. VOICE_RECOGNITION for measurement
         // The buffer size here seems not relate to the delay.
@@ -217,8 +222,8 @@ class SamplingLoop extends Thread {
                 "  source          : " + analyzerParam.getAudioSourceName() + "\n" +
                 String.format("  sample rate     : %d Hz (request %d Hz)\n", record.getSampleRate(), analyzerParam.sampleRate) +
                 String.format("  min buffer size : %d samples, %d Bytes\n", minBytes / analyzerParam.BYTE_OF_SAMPLE, minBytes) +
-                String.format("  buffer size     : %d samples, %d Bytes\n", bufferSampleSize, analyzerParam.BYTE_OF_SAMPLE*bufferSampleSize) +
-                String.format("  read chunk size : %d samples, %d Bytes\n", readChunkSize, analyzerParam.BYTE_OF_SAMPLE* readChunkSize) +
+                String.format("  buffer size     : %d samples, %d Bytes\n", bufferSampleSize, analyzerParam.BYTE_OF_SAMPLE * bufferSampleSize) +
+                String.format("  read chunk size : %d samples, %d Bytes\n", readChunkSize, analyzerParam.BYTE_OF_SAMPLE * readChunkSize) +
                 String.format("  FFT length      : %d\n", analyzerParam.fftLen) +
                 String.format("  nFFTAverage     : %d\n", analyzerParam.nFFTAverage));
         analyzerParam.sampleRate = record.getSampleRate();
@@ -234,25 +239,32 @@ class SamplingLoop extends Thread {
         int numOfReadShort;
         /**************AV Declarations Start*******************************************************/
         //create a buffer for data for the last 1.5 sec
-        final int DATACHUNKS_TOSAVE_AFTERDETECTION  = ((WORDDURATION_AFTERDETECTION *analyzerParam.sampleRate) / readChunkSize)/1000;
-        final int DATACHUNKS_TOSAVE_BEFOREDETECTION = ((WORDDURATION_BEFOREDETECTION*analyzerParam.sampleRate) / readChunkSize)/1000;
-        final int DATACHUNKS_TOSAVE_TOTAL=DATACHUNKS_TOSAVE_BEFOREDETECTION + DATACHUNKS_TOSAVE_AFTERDETECTION;//shall be 15 @8000 samples per sec and  23 @16000 samples per second
+        final int DATACHUNKS_TOSAVE_AFTERDETECTION = ((WORDDURATION_AFTERDETECTION * analyzerParam.sampleRate) / readChunkSize) / 1000;
+        final int DATACHUNKS_TOSAVE_BEFOREDETECTION = ((WORDDURATION_BEFOREDETECTION * analyzerParam.sampleRate) / readChunkSize) / 1000;
+        final int DATACHUNKS_TOSAVE_TOTAL = DATACHUNKS_TOSAVE_BEFOREDETECTION + DATACHUNKS_TOSAVE_AFTERDETECTION;//shall be 15 @8000 samples per sec and  23 @16000 samples per second
         //Log.i(TAG, "DATACHUNKS_TOSAVE_TOTAL=" + DATACHUNKS_TOSAVE_TOTAL);
-        short[][]  tempBuffers = new short[DATACHUNKS_TOSAVE_TOTAL][readChunkSize];//last 15 buffers (1.5sec) will be recorded here. When there was a vocalization, I will dump this buffers into a file
+        short[][] tempBuffers = new short[DATACHUNKS_TOSAVE_TOTAL][readChunkSize];//last 15 buffers (1.5sec) will be recorded here. When there was a vocalization, I will dump this buffers into a file
         int tempBuffersIndex = 0;
-        int nDataChunksToWait=0;
+        int nDataChunksToWait = 0;
 
         //create a buffer for threshold for the last 1 sec
-        final int NUMBUFFHIST=((THRESHOLDBUFFERDURATION*analyzerParam.sampleRate) / readChunkSize)/1000;;//every buffer is approximately 100ms
-        rmsHistory =  new double[NUMBUFFHIST]; for(int i=0; i<NUMBUFFHIST; i++) rmsHistory[i]=0;//remember means of 9 previous buffers. This is my amplitude threshold
+        final int NUMBUFFHIST = ((THRESHOLDBUFFERDURATION * analyzerParam.sampleRate) / readChunkSize) / 1000;//every buffer is approximately 100ms
+        rmsHistory = new double[NUMBUFFHIST];
+        for (int i = 0; i < NUMBUFFHIST; i++)
+            rmsHistory[i] = 0;//remember means of 9 previous buffers. This is my amplitude threshold
         Log.i(TAG, "NUMBUFFHIST=" + NUMBUFFHIST);
+
+        peak3RatioHistory = new double[NUMBUFFHIST];
+        for (int i = 0; i < NUMBUFFHIST; i++)
+            peak3RatioHistory[i] = 0;//remember ratios of 9 previous buffers. This is my amplitude threshold
+
         //for(int i=0; i<200; i++) classIndicator.append("-");//this is used to indicate each chunk's classification for the presence of vocalization
         /**************AV Declarations End*******************************************************/
 
         stft = new STFT(analyzerParam);
         stft.setAWeighting(analyzerParam.isAWeighting);
-        if (spectrumDBcopy == null || spectrumDBcopy.length != analyzerParam.fftLen/2+1) {
-            spectrumDBcopy = new double[analyzerParam.fftLen/2+1];
+        if (spectrumDBcopy == null || spectrumDBcopy.length != analyzerParam.fftLen / 2 + 1) {
+            spectrumDBcopy = new double[analyzerParam.fftLen / 2 + 1];
         }
 
         RecorderMonitor recorderMonitor = new RecorderMonitor(analyzerParam.sampleRate, bufferSampleSize, "SamplingLoop::run()");
@@ -260,7 +272,9 @@ class SamplingLoop extends Thread {
 
         WavWriter wavWriter = new WavWriter(analyzerParam.sampleRate);
 
-        try {record.startRecording();}// Start recording
+        try {
+            record.startRecording();
+        }// Start recording
         catch (IllegalStateException e) {
             Log.e(TAG, "Fail to start recording.");
             activity.analyzerViews.notifyToast("Fail to start recording.");
@@ -271,28 +285,33 @@ class SamplingLoop extends Thread {
         // Main loop: When running in this loop (including when paused), you can not change properties related to recorder: e.g. audioSourceId, sampleRate, bufferSampleSize
         while (isRunning) {
             // Read data
-            if (analyzerParam.audioSourceId >= 1000) {  numOfReadShort = readTestData(audioSamples, 0, readChunkSize, analyzerParam.audioSourceId);}
-            else {                                      numOfReadShort = record.read( audioSamples, 0, readChunkSize);}   // pulling
+            if (analyzerParam.audioSourceId >= 1000) {
+                numOfReadShort = readTestData(audioSamples, 0, readChunkSize, analyzerParam.audioSourceId);
+            } else {
+                numOfReadShort = record.read(audioSamples, 0, readChunkSize);
+            }   // pulling
 
             System.arraycopy(audioSamples, 0, tempBuffers[tempBuffersIndex], 0, readChunkSize);//keep the last 1.5 seconds in memory
-            tempBuffersIndex++; if(tempBuffersIndex>=DATACHUNKS_TOSAVE_TOTAL) tempBuffersIndex=0;
+            tempBuffersIndex++;
+            if (tempBuffersIndex >= DATACHUNKS_TOSAVE_TOTAL) tempBuffersIndex = 0;
 
-            if ( recorderMonitor.updateState(numOfReadShort) ) {  // performed a check
+            if (recorderMonitor.updateState(numOfReadShort)) {  // performed a check
                 if (recorderMonitor.getLastCheckOverrun()) activity.analyzerViews.notifyOverrun();
             }
 
-            if(nDataChunksToWait>0)
-            {//keep recording for 1 second after a vocalization was detected
+            if (nDataChunksToWait > 0) {//keep recording for 1 second after a vocalization was detected
                 nDataChunksToWait--;//decrement
-                if (nDataChunksToWait==0)
-                {//all buffers have been filled => push data into the wav file
+                if (nDataChunksToWait == 0) {//all buffers have been filled => push data into the wav file
                     wavWriter.start();
                     wavSecRemain = wavWriter.secondsLeft();//check for available computer memory
                     Log.i(TAG, "PCM write to file " + wavWriter.getPath());
-                    for(int i=0; i<DATACHUNKS_TOSAVE_TOTAL; i++){  wavWriter.pushAudioShort(tempBuffers[(tempBuffersIndex+i)%DATACHUNKS_TOSAVE_TOTAL], readChunkSize);}
+                    for (int i = 0; i < DATACHUNKS_TOSAVE_TOTAL; i++) {
+                        wavWriter.pushAudioShort(tempBuffers[(tempBuffersIndex + i) % DATACHUNKS_TOSAVE_TOTAL], readChunkSize);
+                    }
                     wavSec = wavWriter.secondsWritten();
                     activity.analyzerViews.updateRec(wavSec);
-                    wavWriter.stop(); Log.i(TAG, "SamplingLoop::Run(): Writing an end to the saved wav.");
+                    wavWriter.stop();
+                    Log.i(TAG, "SamplingLoop::Run(): Writing an end to the saved wav.");
                     activity.analyzerViews.notifyWAVSaved(wavWriter.relativeDir);
 
                     /********************************The Wav file is ready => Send API to SpeechAce************************************************************/
@@ -301,13 +320,14 @@ class SamplingLoop extends Thread {
                 }
             }
 
-            if (isPaused) {continue;}
+            if (isPaused) {
+                continue;
+            }
 
             stft.feedData(audioSamples, numOfReadShort);
 
             // If there is new spectrum data, do plot
-            if (stft.nElemSpectrumAmp() >= analyzerParam.nFFTAverage)
-            {
+            if (stft.nElemSpectrumAmp() >= analyzerParam.nFFTAverage) {
                 // Update spectrum or spectrogram
                 final double[] spectrumDB = stft.getSpectrumAmpDB();
                 System.arraycopy(spectrumDB, 0, spectrumDBcopy, 0, spectrumDB.length);
@@ -324,23 +344,27 @@ class SamplingLoop extends Thread {
 
 
                 /**************AV Playground Start*******************************************************/
-                nBuffers++; if(nBuffers==Integer.MAX_VALUE) nBuffers=NUMBUFFHIST;
+                nBuffers++;
+                if (nBuffers == Integer.MAX_VALUE) nBuffers = NUMBUFFHIST;
 
                 //1. remember the RMS of last 8 buffers in order to generate a threshold. The current buffer is rmsHistory[0]; the oldest buffer is rmsHistory[NUMBUFFHIST-1]
-                for(int i=(NUMBUFFHIST-1); i>0; i--) rmsHistory[i]=rmsHistory[i-1];//remember the RMS of last 8 buffers
+                for (int i = (NUMBUFFHIST - 1); i > 0; i--) {
+                    rmsHistory[i] = rmsHistory[i - 1];
+                }//remember the RMS of last 8 buffers
                 rmsHistory[0] = activity.dtRMSFromFT;//the current buffer Math.round(mean);
 
                 //2. determine the threshold for this buffer
-                double ampThreshold=0;
-                for(int i=0; i<NUMBUFFHIST-1; i++) ampThreshold+=rmsHistory[i];//do not include the current buffer
-                ampThreshold/=(NUMBUFFHIST-1);//classIndicator = "ampThreshold=" + String.valueOf(ampThreshold) + "; activity.dtRMSFromFT=" + String.valueOf(activity.dtRMSFromFT);
+                double ampThreshold = 0;
+                for (int i = 0; i < NUMBUFFHIST - 1; i++)
+                    ampThreshold += rmsHistory[i];//do not include the current buffer
+                ampThreshold /= (NUMBUFFHIST - 1);//classIndicator = "ampThreshold=" + String.valueOf(ampThreshold) + "; activity.dtRMSFromFT=" + String.valueOf(activity.dtRMSFromFT);
 
                 //3. Identify and describe harmonics in freq domain
                 //ToDo: consider more harmonics and dynamically identified regions: so the 1st peak is identified then the 2nd peak to the right, then the peak to the left. That will entail identifying local minima.
-                int freqOfPeak1=stft.getIndexOfPeakFreq(200, 800); //classIndicator = "maxFreq=" + String.valueOf(maxFreq);//Log.i(TAG,String.valueOf(spectrumDB[100])+"; "+String.valueOf(spectrumDB[101])+"; "+String.valueOf(spectrumDB[102])+"; "+String.valueOf(spectrumDB[103])+"; "+String.valueOf(spectrumDB[104])+"; "+String.valueOf(spectrumDB[105]));
-                int freqOfPeak2=stft.getIndexOfPeakFreq(800, 1800);
-                int freqOfPeak3=stft.getIndexOfPeakFreq(1800,3500);
-                double mean = stft.getMeanPSD_dB(300,3500); // 300
+                int freqOfPeak1 = stft.getIndexOfPeakFreq(200, 800); //classIndicator = "maxFreq=" + String.valueOf(maxFreq);//Log.i(TAG,String.valueOf(spectrumDB[100])+"; "+String.valueOf(spectrumDB[101])+"; "+String.valueOf(spectrumDB[102])+"; "+String.valueOf(spectrumDB[103])+"; "+String.valueOf(spectrumDB[104])+"; "+String.valueOf(spectrumDB[105]));
+                int freqOfPeak2 = stft.getIndexOfPeakFreq(800, 1800);
+                int freqOfPeak3 = stft.getIndexOfPeakFreq(1800, 3500);
+                double mean = stft.getMeanPSD_dB(300, 3500); // 300
                 double max1 = stft.getPeakAmpl_dB(freqOfPeak1);
                 double max2 = stft.getPeakAmpl_dB(freqOfPeak2);
                 double max3 = stft.getPeakAmpl_dB(freqOfPeak3);
@@ -349,40 +373,61 @@ class SamplingLoop extends Thread {
                 double ratio3 = stft.getPeakToMeanRatio(freqOfPeak3, 500);
 
                 //4. i'd like to make sure that each harmonic is not some kind of not-audible digital artifact. For that I am using absolute values in dB.
-                boolean bP1, bP2, bP3; bP1=bP2=bP3=false;//markers for the three peaks standing above the background;
-                double minPeakPower=mean+20.0;//min peak power in dB
-                if(max1>minPeakPower) bP1=true;
-                if(max2>minPeakPower) bP2=true;
-                if(max3>minPeakPower) bP3=true;
+                boolean bP1, bP2, bP3;
+                bP1 = bP2 = bP3 = false;//markers for the three peaks standing above the background;
+                double minPeakPower = mean + 20.0;//min peak power in dB
+                if (max1 > minPeakPower) bP1 = true;
+                if (max2 > minPeakPower) bP2 = true;
+                if (max3 > minPeakPower) bP3 = true;
 
                 //5. Weighted ratio: use only harmonics with minimum power. We really need to remove meaningless ratios that do not represent any sound, these are basically just artifacts
-                double weightedRatio=0;
-                if		(bP1 && bP2 && bP3) weightedRatio=(ratio1+ratio2+ratio3)/3;
-                else if (bP2 && bP3) weightedRatio=(ratio2+ratio3)/2;
-                else if (bP1 && bP3) weightedRatio=(ratio1+ratio3)/2;
-                else if (bP1 && bP2) weightedRatio=(ratio1+ratio2)/2;
-                else if (bP3) weightedRatio=ratio3;
-                else if (bP2) weightedRatio=ratio2;
-                else if (bP1) weightedRatio=ratio1;
-                else weightedRatio=-1;//'m' - none of the peaks stand above background.
+                double weightedRatio = 0;
+                if (bP1 && bP2 && bP3) weightedRatio = (ratio1 + ratio2 + ratio3) / 3;
+                else if (bP2 && bP3) weightedRatio = (ratio2 + ratio3) / 2;
+                else if (bP1 && bP3) weightedRatio = (ratio1 + ratio3) / 2;
+                else if (bP1 && bP2) weightedRatio = (ratio1 + ratio2) / 2;
+                else if (bP3) weightedRatio = ratio3;
+                else if (bP2) weightedRatio = ratio2;
+                else if (bP1) weightedRatio = ratio1;
+                else weightedRatio = -1;//'m' - none of the peaks stand above background.
+
+                //5B. Store the history of the 3d peak ratio
+                for (int i = (NUMBUFFHIST - 1); i > 0; i--) {
+                    peak3RatioHistory[i] = peak3RatioHistory[i - 1];
+                }//remember the ratio3 of last 8 buffers
+                peak3RatioHistory[0] = ratio3;//
+                peak3Ratio3Chunks = (peak3RatioHistory[0] + peak3RatioHistory[1] + peak3RatioHistory[2]) / 3;
+
 
                 //6. Assign the classifier for this buffer based on weightedRatio
-                String bC="";//string to hold the classifier
-                if(weightedRatio==-1) bC="m";//'m' - none of the peaks stand above background.
-                else if(!bP2 && !bP3 && freqOfPeak1<295) bC="f";//freq of the only peak is too low
-                else if (weightedRatio>10)bC="a";//vocalization was detected
-                else if (weightedRatio>9 )bC="k";//'k' for candidate
-                else if (weightedRatio>6 )bC="e";//'e' for candidate who almost did it., i.e. 70% of min_ratio.
-                else    bC="~"; //~ for ratio too small to become a candidate
+                String bC = "";//string to hold the classifier
+                if (weightedRatio == -1) bC = "m";//'m' - none of the peaks stand above background.
+                else if (!bP2 && !bP3 && freqOfPeak1 < 295)
+                    bC = "f";//freq of the only peak is too low
+                else if (weightedRatio > 10) bC = "a";//vocalization was detected
+                else if (weightedRatio > 9) bC = "k";//'k' for candidate
+                else if (weightedRatio > 6)
+                    bC = "e";//'e' for candidate who almost did it., i.e. 70% of min_ratio.
+                else bC = "~"; //~ for ratio too small to become a candidate
 
                 //7. if the buffer contains loud noise that crosses threshold AND has some reasonable harmonics=>mark as 'w'=buffer with vocalization.
-                if( nBuffers>=NUMBUFFHIST && activity.dtRMSFromFT>(4*ampThreshold) && (bC=="k" || bC=="e") ) bC="t";//Threshold crossing //classIndicator="Crossed Threshold"; else classIndicator="Not crossed threshold";
+                if (nBuffers >= NUMBUFFHIST && activity.dtRMSFromFT > (4 * ampThreshold) && (bC == "k" || bC == "e"))
+                    bC = "t";//Threshold crossing //classIndicator="Crossed Threshold"; else classIndicator="Not crossed threshold";
 
                 //8. Find the beginning of the vocalization as the fist buffer that crossed the threshold - this approach is NOT USED. We simply always grabe 600ms before the data chunk with vocalization
-                if(bC=="a" || bC=="t")
-                {//this buffer is definitely part of a vocalization => wait for DATACHUNKS_TOSAVE_AFTERDETECTION buffers (1sec), then dump the tempAudioSample into a file
-                    if(nDataChunksToWait==0){ nDataChunksToWait = DATACHUNKS_TOSAVE_AFTERDETECTION; Log.i(TAG, "I have detected a word. I will wait for 1sec (DATACHUNKS_TOSAVE_AFTERDETECTION) and save a wav file");}//this is the marker for vocalization. It is also a counter of buffers to wait
-                    else{ Log.i(TAG, "I have detected a vocalization in this data chink, but I am saving this data chink as part of a previous word and therefore I will NOT restart buffering.");}
+                boolean bReportAnalysis = false;
+                if (bC == "a" || bC == "t")
+                {
+                    bReportAnalysis = true;//report all info only for these buffers
+                    if (!bRecordChildOnly || peak3Ratio3Chunks > THRESHOLD_PEAK3_RATIO_DB)
+                    {//this buffer is definitely part of a vocalization => wait for DATACHUNKS_TOSAVE_AFTERDETECTION buffers (1sec), then dump the tempAudioSample into a file
+                        if (nDataChunksToWait == 0) {
+                            nDataChunksToWait = DATACHUNKS_TOSAVE_AFTERDETECTION;
+                            Log.i(TAG, "I have detected a word. I will wait for 1sec (DATACHUNKS_TOSAVE_AFTERDETECTION) and save a wav file");}
+                        }//this is the marker for vocalization. It is also a counter of buffers to wait
+                        else {
+                            Log.i(TAG, "I have detected a vocalization in this data chunk, but I am saving this data chink as part of a previous word and therefore I will NOT restart buffering.");
+                        }
                     /*classIndicator.insert(0,"w");//this buffer is part of vocalization //report each data chunk classification with classIndicator that will look like this: wwwww~~~~~mmfee~wwwww
                     if (rmsHistory[0] >= ampThreshold) {//if there was noise before this buffer count that noise as beginning of a word
                         if      (nBuffers >= 4 && rmsHistory[3] > ampThreshold) {classIndicator.setCharAt(4, 'w');classIndicator.setCharAt(3, 'w');classIndicator.setCharAt(2, 'w');classIndicator.setCharAt(1, 'w');}//look as far away as four buffers=> this is part of the same word
@@ -390,32 +435,36 @@ class SamplingLoop extends Thread {
                         else if (nBuffers >= 2 && rmsHistory[1] > ampThreshold) {classIndicator.setCharAt(2, 'w');classIndicator.setCharAt(1, 'w');}
                         else if (nBuffers >= 1) {classIndicator.setCharAt(1, 'w');}//add one buffer on the edge
                     }*/
+                    }
+                    //else classIndicator.insert(0,"-");;
+
+                    //9. Report the classification of the current buffer //Consider reporting peak thickness
+                    if (classIndicator.length() > 200) classIndicator.deleteCharAt(200);
+                    classIndicator.insert(0, bC);
+                    if (bReportAnalysis) {
+                        Log.i(TAG, classIndicator.toString());
+                    }
+                    if (bReportAnalysis) {
+                        Log.i(TAG, bC + "; wR=" + String.valueOf(Math.round(weightedRatio)) +
+                                " |  f1=" + String.valueOf(freqOfPeak1) + ", m1=" + String.valueOf(Math.round(max1)) + "dB, r1=" + String.valueOf(Math.round(ratio1)) +
+                                " |  f2=" + String.valueOf(freqOfPeak2) + ", m2=" + String.valueOf(Math.round(max2)) + "dB, r2=" + String.valueOf(Math.round(ratio2)) +
+                                " |  f3=" + String.valueOf(freqOfPeak3) + ", m3=" + String.valueOf(Math.round(max3)) + "dB, r3=" + String.valueOf(Math.round(ratio3)) +
+                                " |  r3_1=" + String.valueOf(Math.round(peak3RatioHistory[1])) + ", r3_2=" + String.valueOf(Math.round(peak3RatioHistory[2])) + ", r3_3=" + String.valueOf(Math.round(peak3RatioHistory[3])) +
+                                " |  peak3Ratio3Chunks=" + String.valueOf(Math.round(peak3Ratio3Chunks)) + "  |  mean=" + String.valueOf(Math.round(mean)) + "dB"
+                        );
+
+                    }
+                    //10. Push the last 1.5 sec into a file
+                    //See above: if(nDataChunksToWait>0)
+
+                    /**************AV Playground End*******************************************************/
                 }
-                //else classIndicator.insert(0,"-");;
-
-                //9. Report the classification of the current buffer //Consider reporting peak thickness
-                if(classIndicator.length()>200) classIndicator.deleteCharAt(200);
-                classIndicator.insert(0,bC);
-                if(bReportAnalysis) {Log.i(TAG, classIndicator.toString());}
-                if(bReportAnalysis) {
-                    Log.i(TAG, bC + "; wR=" + String.valueOf(Math.round(weightedRatio)) +
-                            "; f1=" + String.valueOf(freqOfPeak1) + "; m1=" + String.valueOf(Math.round(max1)) + "dB; r1=" + String.valueOf(Math.round(ratio1)) +
-                            "; f2=" + String.valueOf(freqOfPeak2) + "; m2=" + String.valueOf(Math.round(max2)) + "dB; r2=" + String.valueOf(Math.round(ratio2)) +
-                            "; f3=" + String.valueOf(freqOfPeak3) + "; m3=" + String.valueOf(Math.round(max3)) + "dB; r3=" + String.valueOf(Math.round(ratio3)) +
-                            "; mean=" + String.valueOf(Math.round(mean)) + "dB");
-                }
-
-                //10. Push the last 1.5 sec into a file
-                //See above: if(nDataChunksToWait>0)
-
-                /**************AV Playground End*******************************************************/
             }
+            Log.i(TAG, "SamplingLoop::Run(): Actual sample rate: " + recorderMonitor.getSampleRate());
+            Log.i(TAG, "SamplingLoop::Run(): Stopping and releasing recorder.");
+            record.stop();
+            record.release();
         }
-        Log.i(TAG, "SamplingLoop::Run(): Actual sample rate: " + recorderMonitor.getSampleRate());
-        Log.i(TAG, "SamplingLoop::Run(): Stopping and releasing recorder.");
-        record.stop();
-        record.release();
-    }
 
     void setAWeighting(boolean isAWeighting) {
         if (stft != null) {

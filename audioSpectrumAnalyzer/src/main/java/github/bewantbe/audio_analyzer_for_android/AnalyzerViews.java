@@ -525,8 +525,9 @@ class AnalyzerViews {
 
     private void setCurText(){
         ((TextView) activity.findViewById(R.id.testingLetter)).setText(textCurChar, 0, Math.min(textCur.length(), textCurChar.length));
+
         if (textCur.length() > 5){
-            if (textCur.substring(0,5).contains("aaa")){
+            if (textCur.substring(0,5).contains("aaa") && (activity.samplingThread.peak3Ratio3Chunks > 50)){
                 activity.rewardDog();
             }
 
