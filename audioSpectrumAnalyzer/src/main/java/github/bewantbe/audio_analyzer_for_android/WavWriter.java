@@ -203,8 +203,8 @@ class WavWriter {
     return Environment.MEDIA_MOUNTED.equals(state);
   }
   
-  String getPath() {
-    return outPath.getPath();
-  }
+  //String getPath() {
+    //return outPath.getPath();
+  //}
   
 }

@@ -302,22 +302,22 @@ class SamplingLoop extends Thread {
             if (nDataChunksToWait > 0) {//keep recording for 1 second after a vocalization was detected
                 nDataChunksToWait--;//decrement
                 if (nDataChunksToWait == 0) {//all buffers have been filled => push data into the wav file
-                    wavWriter.start();
-                    wavSecRemain = wavWriter.secondsLeft();//check for available computer memory
-                    Log.i(TAG, "PCM write to file " + wavWriter.getPath());
-                    for (int i = 0; i < DATACHUNKS_TOSAVE_TOTAL; i++) {
-                        wavWriter.pushAudioShort(tempBuffers[(tempBuffersIndex + i) % DATACHUNKS_TOSAVE_TOTAL], readChunkSize);
+                    //wavWriter.start();
+                    //wavSecRemain = wavWriter.secondsLeft();//check for available computer memory
+                    //Log.i(TAG, "PCM write to file " + wavWriter.getPath());
+                    //for (int i = 0; i < DATACHUNKS_TOSAVE_TOTAL; i++) {
+                        //wavWriter.pushAudioShort(tempBuffers[(tempBuffersIndex + i) % DATACHUNKS_TOSAVE_TOTAL], readChunkSize);
                     }
-                    wavSec = wavWriter.secondsWritten();
-                    activity.analyzerViews.updateRec(wavSec);
-                    wavWriter.stop();
-                    Log.i(TAG, "SamplingLoop::Run(): Writing an end to the saved wav.");
-                    activity.analyzerViews.notifyWAVSaved(wavWriter.relativeDir);
+                    //wavSec = wavWriter.secondsWritten();
+                    //activity.analyzerViews.updateRec(wavSec);
+                    //wavWriter.stop();
+                    //Log.i(TAG, "SamplingLoop::Run(): Writing an end to the saved wav.");
+                    //activity.analyzerViews.notifyWAVSaved(wavWriter.relativeDir);
 
                     /********************************The Wav file is ready => Send API to SpeechAce************************************************************/
                     //The Wav file is ready => Send API to SpeechAce
                     /********************************************************************************************/
-                }
+              //  }
             }
 
             if (isPaused) {
