@@ -30,6 +30,12 @@
         android:textSize="10dp"
         android:layout_alignParentBottom="true"/>
 
+    <Button
+        android:id="@+id/toConnectionList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Connect to different dog" />
+
     <ListView
         android:id="@+id/connectionTable"
         android:layout_width="match_parent"
