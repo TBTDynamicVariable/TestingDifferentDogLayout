@@ -750,32 +750,10 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         // Start sampling
         samplingThread = new SamplingLoop(this, _analyzerParam);
         samplingThread.start();
-        //put reward dog logic here
 
-        //trial 2
-       /* int counter = 0;
-
-        if(AnalyzerViews.test.contains("a")){
-            counter=counter+1;}
-
-            if(counter>=1){
-                rewardDog();
-                counter = 0;
-            }*/
+        //if disconnected go back to main menu
 
 
-
-        //trial 1
-        /*
-        int counter = 0;
-        while(true) {
-            if (AnalyzerViews.textCurChar[counter] == 'a') {
-                rewardDog();
-            }
-            else{
-            counter=counter+1;}
-
-        }*/
     }
 
     // For call requestPermissions() after each showPermissionExplanation()
@@ -990,9 +968,21 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
             //Play sound 111 = demo music 3
 
             robot.chipPlayBodycon((byte) (1));
-
-
         }
+        //else if (ChipRobotFinder.getInstance().getChipRobotConnectedList().size() == 0){opentoDogActivity();}
+
+
+
+
+
 
     }
+
+    /*
+    public void opentoDogActivity(){
+        Intent intent = new Intent(this,toDogActivity.class);
+        startActivity(intent);
+    }
+    */
+
 }
