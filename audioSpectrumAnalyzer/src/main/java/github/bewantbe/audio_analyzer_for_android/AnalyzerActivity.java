@@ -83,6 +83,7 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
     SamplingLoop samplingThread = null;
     private RangeViewDialogC rangeViewDialogC;
     private GestureDetectorCompat mDetector;
+    private String m_Text = "";
 
     private AnalyzerParameters analyzerParam = null;    // Same with params
     String currentIndicator;
