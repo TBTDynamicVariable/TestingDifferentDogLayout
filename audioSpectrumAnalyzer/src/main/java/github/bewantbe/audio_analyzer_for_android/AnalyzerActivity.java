@@ -23,6 +23,7 @@ package github.bewantbe.audio_analyzer_for_android;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,6 +38,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
+import android.text.InputType;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -52,6 +54,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -993,6 +996,31 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
 
 
         }
+        else if (ChipRobotFinder.getInstance().getChipRobotConnectedList().size() == 0) {
+            /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Warning Device Disconnected");
+            // Set up the Input
+            final EditText input = new EditText(this);
+            //Specify the type of input expected ; this,
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            builder.setView(input);
+            */
+            Button bt;
+            bt = (Button) findViewById(R.id.button);
+            bt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(), "Warning Disconnected", Toast.LENGTH_SHORT).show();
+                }
+            }
 
+            opentoDogActivity();
+
+        }
+
+    }
+    public void opentoDogActivity(){
+        Intent intent = new Intent(this,toDogActivity.class);
+        startActivity(intent);
     }
 }
