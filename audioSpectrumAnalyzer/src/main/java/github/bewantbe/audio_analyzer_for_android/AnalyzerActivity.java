@@ -1012,7 +1012,7 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
                 public void onClick(View v) {
                     Toast.makeText(getApplicationContext(), "Warning Disconnected", Toast.LENGTH_SHORT).show();
                 }
-            }
+            };
 
             opentoDogActivity();
 
