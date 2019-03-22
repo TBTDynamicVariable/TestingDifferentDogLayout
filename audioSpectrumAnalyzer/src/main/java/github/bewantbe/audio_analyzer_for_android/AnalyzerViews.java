@@ -17,6 +17,7 @@ package github.bewantbe.audio_analyzer_for_android;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -42,6 +43,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobotFinder;
 
 
 /**
@@ -527,10 +529,13 @@ class AnalyzerViews {
         ((TextView) activity.findViewById(R.id.testingLetter)).setText(textCurChar, 0, Math.min(textCur.length(), textCurChar.length));
 
         if (textCur.length() > 5){
+
             if (textCur.substring(0,5).contains("aaa") && (activity.samplingThread.peak3Ratio3Chunks > 50)){
                 activity.rewardDog();
             }
 
     }}
+
+
 
 }
