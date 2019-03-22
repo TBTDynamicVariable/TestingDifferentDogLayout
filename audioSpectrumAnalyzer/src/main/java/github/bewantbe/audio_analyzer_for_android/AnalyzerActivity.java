@@ -25,6 +25,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -997,14 +998,28 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
 
         }
         else if (ChipRobotFinder.getInstance().getChipRobotConnectedList().size() == 0) {
-            /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Warning Device Disconnected");
             // Set up the Input
             final EditText input = new EditText(this);
             //Specify the type of input expected ; this,
             input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             builder.setView(input);
-            */
+            // Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int which) {
+                    m_Text = input.getText().toString();
+                }
+                });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.show();
+            /*
             Button bt;
             bt = (Button) findViewById(R.id.button);
             bt.setOnClickListener(new View.OnClickListener() {
@@ -1012,7 +1027,7 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
                 public void onClick(View v) {
                     Toast.makeText(getApplicationContext(), "Warning Disconnected", Toast.LENGTH_SHORT).show();
                 }
-            };
+            };*/
 
             opentoDogActivity();
 
