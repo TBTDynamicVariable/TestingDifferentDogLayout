@@ -24,6 +24,7 @@ package github.bewantbe.audio_analyzer_for_android;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -1035,6 +1036,10 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         }
 
     }
+    public int getConnectionState (BluetoothDevice robot, int profile) {
+        return getConnectionState(robot, profile);
+    }
+
     public void opentoDogActivity(){
         Intent intent = new Intent(this,toDogActivity.class);
         startActivity(intent);
