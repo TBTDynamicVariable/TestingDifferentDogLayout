@@ -17,6 +17,7 @@ package github.bewantbe.audio_analyzer_for_android;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -53,6 +54,10 @@ class AnalyzerViews {
     final String TAG = "AnalyzerViews";
     private final AnalyzerActivity activity;
     final AnalyzerGraphic graphView;
+    String prefDirect = toDogActivity.prefDirect;
+    SharedPreferences dogPref = toDogActivity.dogPref;
+    SharedPreferences.Editor dogEdit = toDogActivity.dogEdit;
+
 
     private float DPRatio;
     private float listItemTextSize = 20;        // see R.dimen.button_text_fontsize
@@ -82,6 +87,8 @@ class AnalyzerViews {
     boolean bWarnOverrun = true;
 
     AnalyzerViews(AnalyzerActivity _activity) {
+
+
         activity = _activity;
         graphView = (AnalyzerGraphic) activity.findViewById(R.id.plot);
 

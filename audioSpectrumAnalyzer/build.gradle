@@ -11,7 +11,7 @@ repositories {
         buildToolsVersion '27.0.3'
         defaultConfig {
             applicationId "github.bewantbe.audio_analyzer_for_android"
-            minSdkVersion 18
+            minSdkVersion 21
             targetSdkVersion 27
         }
         buildTypes {
