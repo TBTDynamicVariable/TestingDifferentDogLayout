@@ -15,8 +15,10 @@
 
 package github.bewantbe.audio_analyzer_for_android;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -31,6 +33,7 @@ import android.support.annotation.NonNull;
 import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
@@ -43,6 +46,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobotFinder;
 
 
 /**
@@ -50,7 +54,7 @@ import android.widget.Toast;
  * Should run on UI thread in general.
  */
 
-class AnalyzerViews {
+class AnalyzerViews extends Activity {
     final String TAG = "AnalyzerViews";
     private final AnalyzerActivity activity;
     final AnalyzerGraphic graphView;
@@ -87,8 +91,6 @@ class AnalyzerViews {
     boolean bWarnOverrun = true;
 
     AnalyzerViews(AnalyzerActivity _activity) {
-
-
         activity = _activity;
         graphView = (AnalyzerGraphic) activity.findViewById(R.id.plot);
 
@@ -532,12 +534,41 @@ class AnalyzerViews {
 
     private void setCurText(){
         ((TextView) activity.findViewById(R.id.testingLetter)).setText(textCurChar, 0, Math.min(textCur.length(), textCurChar.length));
+//rechecks list and if nothing on list push to main menu
+        if(textCur.substring(0,5).contains("f"))
+        {scanLeDevice(true);
+            if(ChipRobotFinder.getInstance().getChipRobotConnectedList().size() == 0)
+            {opentoDogActivity();
+            scanLeDevice(false);}
+            else if(ChipRobotFinder.getInstance().getChipRobotConnectedList().size() > 0){scanLeDevice(false);}
+        }
 
         if (textCur.length() > 5){
+
+
+
             if (textCur.substring(0,5).contains("aaa") && (activity.samplingThread.peak3Ratio3Chunks > 50)){
                 activity.rewardDog();
             }
 
+
     }}
+
+
+
+    private void scanLeDevice(final boolean enable) {
+        if (enable) {
+            Log.d("ChipScan", "Scan Le device start");
+            // Stops scanning after a pre-defined scan period.
+            ChipRobotFinder.getInstance().scanForChipContinuous();
+        }else{
+            Log.d("ChipScan", "Scan Le device stop");
+            ChipRobotFinder.getInstance().stopScanForChipContinuous();
+        }
+    }
+    public void opentoDogActivity(){
+        Intent intent = new Intent(this,toDogActivity.class);
+        startActivity(intent);
+    }
 
 }

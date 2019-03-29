@@ -23,7 +23,10 @@ package github.bewantbe.audio_analyzer_for_android;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -37,6 +40,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
+import android.text.InputType;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -52,6 +56,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,6 +84,7 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
     SamplingLoop samplingThread = null;
     private RangeViewDialogC rangeViewDialogC;
     private GestureDetectorCompat mDetector;
+    private String m_Text = "";
 
     private AnalyzerParameters analyzerParam = null;    // Same with params
     String currentIndicator;
@@ -992,7 +998,17 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
             robot.chipPlayBodycon((byte) (1));
 
 
-        }
+        }}/*
+        else if(getConnectionState(ChipRobot, 0)){}
 
+
+    }
+    public int getConnectionState (BluetoothDevice robot, int profile) {
+        return getConnectionState(robot, profile);
+    }
+*/
+    public void opentoDogActivity(){
+        Intent intent = new Intent(this,toDogActivity.class);
+        startActivity(intent);
     }
 }
