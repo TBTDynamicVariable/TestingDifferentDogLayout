@@ -45,6 +45,10 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
+import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobot;
 import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobotFinder;
 
 
@@ -529,14 +533,6 @@ class AnalyzerViews extends Activity {
 
     private void setCurText(){
         ((TextView) activity.findViewById(R.id.testingLetter)).setText(textCurChar, 0, Math.min(textCur.length(), textCurChar.length));
-//rechecks list and if nothing on list push to main menu
-        if(textCur.substring(0,5).contains("f"))
-        {scanLeDevice(true);
-            if(ChipRobotFinder.getInstance().getChipRobotConnectedList().size() == 0)
-            {opentoDogActivity();
-            scanLeDevice(false);}
-            else if(ChipRobotFinder.getInstance().getChipRobotConnectedList().size() > 0){scanLeDevice(false);}
-        }
 
         if (textCur.length() > 5){
 
@@ -549,9 +545,38 @@ class AnalyzerViews extends Activity {
 
     }}
 
+    //use a timer to check robot list every "t" seconds
+    public void main(String[] args){
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+
+                //testing timer functionality
+                if (ChipRobotFinder.getInstance().getChipRobotConnectedList().size() > 0) {
+                    ChipRobot robot = (ChipRobot) ChipRobotFinder.getInstance().getChipRobotConnectedList().get(0);
+
+                    robot.chipPlayBodycon((byte) (3));}
+                    //for later actual functions
+               /* scanLeDevice(true);
+                    if(ChipRobotFinder.getInstance().getChipRobotConnectedList().size() == 0){
+                        //call activity to display warning message
+                    }
+
+                    else if(ChipRobotFinder.getInstance().getChipRobotConnectedList().size() > 0)
+                    {scanLeDevice(false);}*/
+
+            }
+        };
 
 
-    private void scanLeDevice(final boolean enable) {
+        timer.schedule(task, 10000,1000);
+
+
+    }
+
+
+    public void scanLeDevice(final boolean enable) {
         if (enable) {
             Log.d("ChipScan", "Scan Le device start");
             // Stops scanning after a pre-defined scan period.
@@ -561,9 +586,6 @@ class AnalyzerViews extends Activity {
             ChipRobotFinder.getInstance().stopScanForChipContinuous();
         }
     }
-    public void opentoDogActivity(){
-        Intent intent = new Intent(this,toDogActivity.class);
-        startActivity(intent);
-    }
+
 
 }
