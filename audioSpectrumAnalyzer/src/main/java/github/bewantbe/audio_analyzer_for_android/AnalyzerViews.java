@@ -549,7 +549,8 @@ class AnalyzerViews extends Activity {
 
 
     }}
-
+//new stuff to be uncommented after autoconnect testing finished
+    /*
     //use a timer to check robot list every "t" seconds
     public void main(String[] args){
         Timer timer = new Timer();
@@ -563,13 +564,13 @@ class AnalyzerViews extends Activity {
 
                     robot.chipPlayBodycon((byte) (3));}
                     //for later actual functions
-               /* scanLeDevice(true);
+                scanLeDevice(true);
                     if(ChipRobotFinder.getInstance().getChipRobotConnectedList().size() == 0){
                         //call activity to display warning message
                     }
 
                     else if(ChipRobotFinder.getInstance().getChipRobotConnectedList().size() > 0)
-                    {scanLeDevice(false);}*/
+                    {scanLeDevice(false);}
 
             }
         };
@@ -592,5 +593,5 @@ class AnalyzerViews extends Activity {
         }
     }
 
-
+*/
 }
