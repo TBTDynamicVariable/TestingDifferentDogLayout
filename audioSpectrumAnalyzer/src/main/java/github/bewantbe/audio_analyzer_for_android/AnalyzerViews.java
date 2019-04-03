@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -61,6 +62,10 @@ class AnalyzerViews extends Activity {
     final String TAG = "AnalyzerViews";
     private final AnalyzerActivity activity;
     final AnalyzerGraphic graphView;
+    String prefDirect = toDogActivity.prefDirect;
+    SharedPreferences dogPref = toDogActivity.dogPref;
+    SharedPreferences.Editor dogEdit = toDogActivity.dogEdit;
+
 
     private float DPRatio;
     private float listItemTextSize = 20;        // see R.dimen.button_text_fontsize

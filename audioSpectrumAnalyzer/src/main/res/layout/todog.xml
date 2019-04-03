@@ -21,6 +21,12 @@
         android:layout_marginTop="20dp"
         android:layout_alignParentEnd="true"/>
 
+    <Switch
+        android:id="@+id/AttemptAuto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Attempt Autoconnect" />
+
     <TextView
         android:id="@+id/bottomTV"
         android:layout_width="fill_parent"
