@@ -994,7 +994,6 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         if (ChipRobotFinder.getInstance().getChipRobotConnectedList().size() > 0) {
             ChipRobot robot = (ChipRobot) ChipRobotFinder.getInstance().getChipRobotConnectedList().get(0);
 
-
             robot.chipPlayBodycon((byte) (1));
 
 
