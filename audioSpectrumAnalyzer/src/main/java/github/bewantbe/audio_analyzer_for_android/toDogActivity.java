@@ -72,9 +72,8 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
 
-        dogPref = getApplicationContext().getSharedPreferences(prefDirect,0);
+        dogPref = getApplicationContext().getSharedPreferences(prefDirect, 0);
         dogEdit = dogPref.edit();
-
 
 
         //getActivity().getWindow().getDecorView().setSystemUiVisibility(flags);
@@ -82,17 +81,16 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
 
         //View view = inflater.inflate(R.layout.fragment_connect, container, false);
 
-        textView = (TextView)findViewById(R.id.topTV);
-        listView = (ListView)findViewById(R.id.connectionTable);
-        attemptAutoBool = (Switch)findViewById(R.id.AttemptAuto);
+        textView = (TextView) findViewById(R.id.topTV);
+        listView = (ListView) findViewById(R.id.connectionTable);
+        attemptAutoBool = (Switch) findViewById(R.id.AttemptAuto);
         String[] robotNameArr = {"Please turn on CHIP"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(toDogActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, robotNameArr);
         listView.setAdapter(adapter);
         checkLocationPermission();
 
 
-
-        final Button refreshBtn = (Button)findViewById(R.id.refreshBtn);
+        final Button refreshBtn = (Button) findViewById(R.id.refreshBtn);
         refreshBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,7 +105,7 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
         listConnectToDog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                refreshConnection(listConnectToDog, refreshBtn, listView, textView);
+                // refreshConnection(listConnectToDog, refreshBtn, listView, textView);
             }
         });
 
@@ -125,7 +123,7 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
                 if (ChipRobotFinder.getInstance().getChipFoundList().size() > 0) { // If there exists a dog in the list
                     String targetRobotName = robotNameList.get(position); // clicked robot becomes the robot name
                     dogEdit.putString("dogID", targetRobotName);
-                     // Save typical robot ID and submit the check to false.
+                    // Save typical robot ID and submit the check to false.
                     dogEdit.commit();
                     for (ChipRobot robot : (List<ChipRobot>) ChipRobotFinder.getInstance().getChipFoundList()) {
                         if (robot.getName().contentEquals(targetRobotName)) {
@@ -137,8 +135,9 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
                                     scanLeDevice(false);
                                 }
                             });
-                            dogEdit.putBoolean("firstConnect",false);
+                            dogEdit.putBoolean("firstConnect", false);
                             openAnalyzerActivity();
+                            finish();
                             break;
                         }
                     }
@@ -147,15 +146,10 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
         });
 
         // Conditional to check if this is the first time the program has run. If yes, we ignore it, if not, we just chill and wait for the onclick listeners for connecting
-    // Make this just attempt auto correct, have an if otherwise
-    for (int i = 0; i < 100; i++) {
+        // Make this just attempt auto correct, have an if otherwise
+
         attemptAutoConnect();
-
     }
-        textView.setText("Unable to connect to: "+ dogPref.getString("dogID","") + "\n Please connect Manually" );
-
-    }
-
 
     void connect(ChipRobot robot) {
         robot.setCallbackInterface(this);
@@ -323,57 +317,14 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
             return true;
         }
     }
-    public void setFirstConnect(){
-        if (dogPref.getBoolean("firstConnect",true) == true){
-            dogEdit.putBoolean("firstConnect",false);
-            dogEdit.commit();
-        }
-    }
-    public void setDogID(String newId){
-        dogEdit.putString("dogID",newId);
-        dogEdit.commit();
 
-    }
-    public void refreshConnection(Button differentDog,Button refreshBut, ListView connectList, TextView topLabel ){
-        if ((dogPref.getString("dogID"," ") == " ")) {
-            differentDog.setText("No Preferred Dog ID");
-        }
-       else if (!dogPref.getBoolean("firstConnect",true) && !attemptAutoBool.getShowText()){
-            // makeInvis(differentDog,refreshBut); // Setting UI parameters invis when unneeded
-            textView.setText("Attempting Autoconnect to: " + dogPref.getString("dogID",""));
-                for (ChipRobot autoRobot : (List<ChipRobot>) ChipRobotFinder.getInstance().getChipFoundList()){
-                    if(autoRobot.getName().contentEquals(dogPref.getString("dogID"," "))){
-                        final ChipRobot defaultChipRobot = autoRobot;
-                        toDogActivity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                connect(defaultChipRobot);
-                                scanLeDevice(false);
-                            }
-                        });
-                        openAnalyzerActivity();
-                        break;
-                    }
-                }
-
-            dogEdit.putString("dogID"," ");
-            dogEdit.putBoolean("firstConnect",true);
-            dogEdit.commit();
-            topLabel.setText("Dog List");
-            refreshBut.setVisibility(View.VISIBLE);
-            listView.setVisibility(View.VISIBLE);
-            differentDog.setText("Click on dog below to connect");
-
-        }
-    }
     public void attemptAutoConnect(){
         if (!dogPref.getBoolean("firstConnect",true)) {
             updateChipList();
             attemptAutoBool.setChecked(true);
             textView.setText("Attempting Autoconnect to: " + dogPref.getString("dogID",""));
-            for (int i = 0; i < 4; i++){
-                for (ChipRobot autoRobot : (List<ChipRobot>) ChipRobotFinder.getInstance().getChipFoundList()){
-                    if(autoRobot.getName().contentEquals(dogPref.getString("dogID"," "))){
+            for (ChipRobot autoRobot : (List<ChipRobot>) ChipRobotFinder.getInstance().getChipFoundList()){
+                    autoRobot.setName(dogPref.getString("dogID"," "));
                         final ChipRobot defaultChipRobot = autoRobot;
                         toDogActivity.this.runOnUiThread(new Runnable() {
                             @Override
@@ -383,23 +334,12 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
                             }
                         });
                         openAnalyzerActivity();
+                        finish();
                         break;
-
-                    }
-
-
-                }}
+                }
              }
-
     }
 
-    public void makeInvis(Button listConnectToDog, Button refreshBtn){
-        /*if (!dogPref.getBoolean("firstConnect", true) && attemptAutoBool.getShowText()){
-            refreshBtn.setVisibility(View.INVISIBLE);
-            listView.setVisibility(View.INVISIBLE);
-            listConnectToDog.setText("Stop Autoconnect Attempt");
-        }*/
-    }
     }
 
 
