@@ -46,8 +46,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import android.os.Handler;
 
 import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobot;
 import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobotFinder;
@@ -542,56 +541,21 @@ class AnalyzerViews extends Activity {
         if (textCur.length() > 5){
 
 
-
             if (textCur.substring(0,5).contains("aaa") && (activity.samplingThread.peak3Ratio3Chunks > 50)){
                 activity.rewardDog();
             }
 
 
     }}
-//new stuff to be uncommented after autoconnect testing finished
-    /*
-    //use a timer to check robot list every "t" seconds
-    public void main(String[] args){
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-
-                //testing timer functionality
-                if (ChipRobotFinder.getInstance().getChipRobotConnectedList().size() > 0) {
-                    ChipRobot robot = (ChipRobot) ChipRobotFinder.getInstance().getChipRobotConnectedList().get(0);
-
-                    robot.chipPlayBodycon((byte) (3));}
-                    //for later actual functions
-                scanLeDevice(true);
-                    if(ChipRobotFinder.getInstance().getChipRobotConnectedList().size() == 0){
-                        //call activity to display warning message
-                    }
-
-                    else if(ChipRobotFinder.getInstance().getChipRobotConnectedList().size() > 0)
-                    {scanLeDevice(false);}
-
-            }
-        };
 
 
-        timer.schedule(task, 10000,1000);
 
 
-    }
 
 
-    public void scanLeDevice(final boolean enable) {
-        if (enable) {
-            Log.d("ChipScan", "Scan Le device start");
-            // Stops scanning after a pre-defined scan period.
-            ChipRobotFinder.getInstance().scanForChipContinuous();
-        }else{
-            Log.d("ChipScan", "Scan Le device stop");
-            ChipRobotFinder.getInstance().stopScanForChipContinuous();
-        }
-    }
 
-*/
+
+
+
+
 }

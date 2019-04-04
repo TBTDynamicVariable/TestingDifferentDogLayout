@@ -756,6 +756,8 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         // Start sampling
         samplingThread = new SamplingLoop(this, _analyzerParam);
         samplingThread.start();
+        handler.postDelayed(runnableCode,5000);
+
         //put reward dog logic here
 
         //trial 2
@@ -991,9 +993,7 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
     public void rewardDog() {
         if (ChipRobotFinder.getInstance().getChipRobotConnectedList().size() > 0) {
             ChipRobot robot = (ChipRobot) ChipRobotFinder.getInstance().getChipRobotConnectedList().get(0);
-            //Play animation 5 = dance
-            //Play sound 110 =  demo music 2
-            //Play sound 111 = demo music 3
+
 
             robot.chipPlayBodycon((byte) (1));
 
@@ -1007,8 +1007,17 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         return getConnectionState(robot, profile);
     }
 */
-    public void opentoDogActivity(){
-        Intent intent = new Intent(this,toDogActivity.class);
-        startActivity(intent);
-    }
+    private Handler handler = new Handler();
+    // Define the code block to be executed
+    private Runnable runnableCode = new Runnable() {
+        @Override
+        public void run() {
+            if (ChipRobotFinder.getInstance().getChipRobotConnectedList().size() > 0) {
+                ChipRobot robot = (ChipRobot) ChipRobotFinder.getInstance().getChipRobotConnectedList().get(0);
+
+
+                robot.chipPlayBodycon((byte) (1));}
+            handler.postDelayed(this, 5000);
+        }
+    };
 }
