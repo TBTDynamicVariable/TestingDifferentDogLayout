@@ -1001,14 +1001,15 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         }}
 
     private Handler handler = new Handler();
-
+//repetitive task that should check to see if dog is connected. if not display alert
     private Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
 
-            analyzerToDog.scanLeDevice(false);
-            analyzerToDog.updateChipList(); //not working rn
+           // ChipRobotFinder.getInstance().clearFoundChipList();
             analyzerToDog.scanLeDevice(true);
+           // analyzerToDog.updateChipList(); //not working rn
+            analyzerToDog.scanLeDevice(false);
             if (ChipRobotFinder.getInstance().getChipRobotConnectedList().size() == 0) {
               openDialog();
             }
@@ -1017,7 +1018,8 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
     };
 
     public void openDialog() {
-        AlertDialog exampleDialog = new AlertDialog();
-        exampleDialog.setShowsDialog(true);
+        AlertDialog alertDialog = new AlertDialog();
+        alertDialog.setShowsDialog(true);
+
     }
 }
