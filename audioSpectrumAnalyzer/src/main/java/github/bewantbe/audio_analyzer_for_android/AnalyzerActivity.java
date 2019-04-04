@@ -85,6 +85,7 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
     private RangeViewDialogC rangeViewDialogC;
     private GestureDetectorCompat mDetector;
     private String m_Text = "";
+    toDogActivity analyzerToDog = new toDogActivity();
 
     private AnalyzerParameters analyzerParam = null;    // Same with params
     String currentIndicator;

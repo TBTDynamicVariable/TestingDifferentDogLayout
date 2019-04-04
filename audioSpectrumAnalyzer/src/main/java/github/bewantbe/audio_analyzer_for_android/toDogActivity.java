@@ -223,7 +223,7 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
         ChipRobotFinder.getInstance().setApplicationContext(this);
     }
 
-    private void scanLeDevice(final boolean enable) {
+    public void scanLeDevice(final boolean enable) {
         if (enable) {
             Log.d("ChipScan", "Scan Le device start");
             // Stops scanning after a pre-defined scan period.
