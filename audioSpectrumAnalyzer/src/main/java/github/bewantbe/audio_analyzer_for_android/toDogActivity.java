@@ -234,7 +234,7 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
         }
     }
 
-    private void updateChipList(){
+    public void updateChipList(){
         robotNameList = new ArrayList();
         for (ChipRobot robot : (List<ChipRobot>)ChipRobotFinder.getInstance().getChipFoundList()) {
             robotNameList.add(robot.getName());

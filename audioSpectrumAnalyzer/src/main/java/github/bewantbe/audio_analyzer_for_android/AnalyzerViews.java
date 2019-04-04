@@ -556,6 +556,4 @@ class AnalyzerViews extends Activity {
 
 
 
-
-
 }

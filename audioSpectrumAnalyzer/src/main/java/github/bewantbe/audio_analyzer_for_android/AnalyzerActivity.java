@@ -23,7 +23,7 @@ package github.bewantbe.audio_analyzer_for_android;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -998,26 +998,26 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
             robot.chipPlayBodycon((byte) (1));
 
 
-        }}/*
-        else if(getConnectionState(ChipRobot, 0)){}
+        }}
 
-
-    }
-    public int getConnectionState (BluetoothDevice robot, int profile) {
-        return getConnectionState(robot, profile);
-    }
-*/
     private Handler handler = new Handler();
-    // Define the code block to be executed
+
     private Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
-            if (ChipRobotFinder.getInstance().getChipRobotConnectedList().size() > 0) {
-                ChipRobot robot = (ChipRobot) ChipRobotFinder.getInstance().getChipRobotConnectedList().get(0);
 
-
-                robot.chipPlayBodycon((byte) (1));}
+            analyzerToDog.scanLeDevice(false);
+            analyzerToDog.updateChipList(); //not working rn
+            analyzerToDog.scanLeDevice(true);
+            if (ChipRobotFinder.getInstance().getChipRobotConnectedList().size() == 0) {
+              openDialog();
+            }
             handler.postDelayed(this, 5000);
         }
     };
+
+    public void openDialog() {
+        AlertDialog exampleDialog = new AlertDialog();
+        exampleDialog.setShowsDialog(true);
+    }
 }
