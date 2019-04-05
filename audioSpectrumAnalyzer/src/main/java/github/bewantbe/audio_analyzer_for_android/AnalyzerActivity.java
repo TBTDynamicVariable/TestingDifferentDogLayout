@@ -76,8 +76,8 @@ import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobotFinder;
 
 
 public class AnalyzerActivity extends Activity          // AnalyzerActivity is directly linked to AnalyzerGraphic.Readyghbnnn
-    implements OnLongClickListener, OnClickListener,
-               OnItemClickListener, AnalyzerGraphic.Ready
+        implements OnLongClickListener, OnClickListener,
+        OnItemClickListener, AnalyzerGraphic.Ready
 {
     private static final String TAG="AnalyzerActivity:";
 
@@ -126,16 +126,16 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
 
         analyzerViews = new AnalyzerViews(this);
 
-       // currentIndicator = analyzerViews attempting to get stuff TODO: as before
+        // currentIndicator = analyzerViews attempting to get stuff TODO: as before
 
         // travel Views, and attach ClickListener to the views that contain android:tag="select"
         visit((ViewGroup) analyzerViews.graphView.getRootView(), new Visit() {
-          @Override
-          public void exec(View view) {
-            view.setOnLongClickListener(AnalyzerActivity.this);
-            view.setOnClickListener(AnalyzerActivity.this);
-            ((TextView) view).setFreezesText(true);
-          }
+            @Override
+            public void exec(View view) {
+                view.setOnLongClickListener(AnalyzerActivity.this);
+                view.setOnClickListener(AnalyzerActivity.this);
+                ((TextView) view).setFreezesText(true);
+            }
         }, "select");
         // P sure this is what actually turns the objects into buttons? Which is, like super cool?
 
@@ -765,10 +765,8 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
 
         //trial 2
        /* int counter = 0;
-
         if(AnalyzerViews.test.contains("a")){
             counter=counter+1;}
-
             if(counter>=1){
                 rewardDog();
                 counter = 0;
@@ -785,7 +783,6 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
             }
             else{
             counter=counter+1;}
-
         }*/
     }
 
@@ -914,9 +911,9 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
                 }
                 analyzerViews.graphView.spectrogramPlot.setPause(pause);
                 return false;
-                //case R.id.graph_view_mode:
-                //  isMeasure = !value.equals("scale");
-                //  return false;
+            //case R.id.graph_view_mode:
+            //  isMeasure = !value.equals("scale");
+            //  return false;
             case R.id.freq_scaling_mode: {
                 Log.d(TAG, "processClick(): freq_scaling_mode = " + value);
                 analyzerViews.graphView.setAxisModeLinear(value);
@@ -1004,7 +1001,7 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
 
     private Handler handler = new Handler();
     BluetoothRobot robot;
-//repetitive task that should check to see if dog is connected. if not display alert
+    //repetitive task that should check to see if dog is connected. if not display alert
     private Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
