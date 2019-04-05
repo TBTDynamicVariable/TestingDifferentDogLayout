@@ -23,7 +23,6 @@ package github.bewantbe.audio_analyzer_for_android;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -36,8 +35,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.text.InputType;
@@ -63,6 +64,7 @@ import android.widget.Toast;
 import java.util.Random;
 import java.lang.String;
 
+import com.wowwee.bluetoothrobotcontrollib.BluetoothRobot;
 import com.wowwee.bluetoothrobotcontrollib.chip.ChipCommandValues;
 import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobot;
 import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobotFinder;
@@ -1001,19 +1003,17 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         }}
 
     private Handler handler = new Handler();
+    BluetoothRobot robot;
 //repetitive task that should check to see if dog is connected. if not display alert
     private Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
 
-           // ChipRobotFinder.getInstance().clearFoundChipList();
-            analyzerToDog.scanLeDevice(true);
-           // analyzerToDog.updateChipList(); //not working rn
-            analyzerToDog.scanLeDevice(false);
-            if (ChipRobotFinder.getInstance().getChipRobotConnectedList().size() == 0) {
+/*
+            if (robot.kBluetoothRobotState) { //kBluetoothRobotState in Bluetooth robot says whether or not it's connected
               openDialog();
             }
-            handler.postDelayed(this, 5000);
+            handler.postDelayed(this, 5000);*/
         }
     };
 
