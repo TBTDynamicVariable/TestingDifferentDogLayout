@@ -23,7 +23,6 @@ package github.bewantbe.audio_analyzer_for_android;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -36,8 +35,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.text.InputType;
@@ -63,6 +64,7 @@ import android.widget.Toast;
 import java.util.Random;
 import java.lang.String;
 
+import com.wowwee.bluetoothrobotcontrollib.BluetoothRobot;
 import com.wowwee.bluetoothrobotcontrollib.chip.ChipCommandValues;
 import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobot;
 import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobotFinder;
@@ -74,8 +76,8 @@ import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobotFinder;
 
 
 public class AnalyzerActivity extends Activity          // AnalyzerActivity is directly linked to AnalyzerGraphic.Readyghbnnn
-    implements OnLongClickListener, OnClickListener,
-               OnItemClickListener, AnalyzerGraphic.Ready
+        implements OnLongClickListener, OnClickListener,
+        OnItemClickListener, AnalyzerGraphic.Ready
 {
     private static final String TAG="AnalyzerActivity:";
 
@@ -124,16 +126,16 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
 
         analyzerViews = new AnalyzerViews(this);
 
-       // currentIndicator = analyzerViews attempting to get stuff TODO: as before
+        // currentIndicator = analyzerViews attempting to get stuff TODO: as before
 
         // travel Views, and attach ClickListener to the views that contain android:tag="select"
         visit((ViewGroup) analyzerViews.graphView.getRootView(), new Visit() {
-          @Override
-          public void exec(View view) {
-            view.setOnLongClickListener(AnalyzerActivity.this);
-            view.setOnClickListener(AnalyzerActivity.this);
-            ((TextView) view).setFreezesText(true);
-          }
+            @Override
+            public void exec(View view) {
+                view.setOnLongClickListener(AnalyzerActivity.this);
+                view.setOnClickListener(AnalyzerActivity.this);
+                ((TextView) view).setFreezesText(true);
+            }
         }, "select");
         // P sure this is what actually turns the objects into buttons? Which is, like super cool?
 
@@ -769,10 +771,8 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
 
         //trial 2
        /* int counter = 0;
-
         if(AnalyzerViews.test.contains("a")){
             counter=counter+1;}
-
             if(counter>=1){
                 rewardDog();
                 counter = 0;
@@ -789,7 +789,6 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
             }
             else{
             counter=counter+1;}
-
         }*/
     }
 
@@ -918,9 +917,9 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
                 }
                 analyzerViews.graphView.spectrogramPlot.setPause(pause);
                 return false;
-                //case R.id.graph_view_mode:
-                //  isMeasure = !value.equals("scale");
-                //  return false;
+            //case R.id.graph_view_mode:
+            //  isMeasure = !value.equals("scale");
+            //  return false;
             case R.id.freq_scaling_mode: {
                 Log.d(TAG, "processClick(): freq_scaling_mode = " + value);
                 analyzerViews.graphView.setAxisModeLinear(value);
@@ -1007,19 +1006,17 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         }}
 
     private Handler handler = new Handler();
-//repetitive task that should check to see if dog is connected. if not display alert
+    BluetoothRobot robot;
+    //repetitive task that should check to see if dog is connected. if not display alert
     private Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
 
-           // ChipRobotFinder.getInstance().clearFoundChipList();
-            analyzerToDog.scanLeDevice(true);
-           // analyzerToDog.updateChipList(); //not working rn
-            analyzerToDog.scanLeDevice(false);
-            if (ChipRobotFinder.getInstance().getChipRobotConnectedList().size() == 0) {
+/*
+            if (robot.kBluetoothRobotState) { //kBluetoothRobotState in Bluetooth robot says whether or not it's connected
               openDialog();
             }
-            handler.postDelayed(this, 5000);
+            handler.postDelayed(this, 5000);*/
         }
     };
 
