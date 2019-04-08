@@ -163,6 +163,12 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         // Start sampling
         restartSampling(analyzerParam);
     }
+    @Override
+    public void onBackPressed(){
+        toDogActivity.dogEdit.putString("dogID", " ");
+        super.onBackPressed();
+        finish();
+    }
 
     @Override
     protected void onPause() {
