@@ -41,7 +41,9 @@ import com.wowwee.bluetoothrobotcontrollib.chip.ChipRobotFinder;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterface {
+
     static String prefDirect = "MyPrefs";
     static SharedPreferences dogPref;
     static SharedPreferences.Editor dogEdit;
@@ -51,13 +53,13 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
     private static final int REQUEST_ENABLE_BT = 1;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private BluetoothAdapter mBluetoothAdapter;
-    private Handler handler;
     private TextView textView;
     private ListView listView;
-    private Switch attemptAutoBool;
+    public Switch attemptAutoBool;
     List<String> robotNameList;
     LocationManager locationManager;
     String provider;
+    String dogChangeVar;// Will probably be changed to a class, for now string placeholder
 
     @Override
     public void onCreate(Bundle savedInstances) {
@@ -105,7 +107,7 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
         listConnectToDog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // refreshConnection(listConnectToDog, refreshBtn, listView, textView);
+                refreshConnection();
             }
         });
 
@@ -116,15 +118,15 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
 
         this.initBluetooth();
 
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
                 if (ChipRobotFinder.getInstance().getChipFoundList().size() > 0) { // If there exists a dog in the list
                     String targetRobotName = robotNameList.get(position); // clicked robot becomes the robot name
-                    dogEdit.putString("dogID", targetRobotName);
+                    dogChangeVar = targetRobotName;
                     // Save typical robot ID and submit the check to false.
-                    dogEdit.commit();
                     for (ChipRobot robot : (List<ChipRobot>) ChipRobotFinder.getInstance().getChipFoundList()) {
                         if (robot.getName().contentEquals(targetRobotName)) {
                             final ChipRobot connectChipRobot = robot;
@@ -135,21 +137,28 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
                                     scanLeDevice(false);
                                 }
                             });
+                            dogEdit.putString("dogID", targetRobotName);
                             dogEdit.putBoolean("firstConnect", false);
+                            dogEdit.commit();
                             openAnalyzerActivity();
-                            finish();
                             break;
                         }
                     }
                 }
             }
         });
+        // We want to set a listview listener for when a field is added or changed. When that happens, attempt to autoconnect if it
+        // is the prefered dog
 
+        if (!dogPref.getBoolean("firstConnect",true)){
+            attemptAutoBool.setShowText(true);
+        }
         // Conditional to check if this is the first time the program has run. If yes, we ignore it, if not, we just chill and wait for the onclick listeners for connecting
         // Make this just attempt auto correct, have an if otherwise
 
-        attemptAutoConnect();
     }
+
+
 
     void connect(ChipRobot robot) {
         robot.setCallbackInterface(this);
@@ -212,11 +221,26 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
         robotNameList = new ArrayList();
         for (ChipRobot robot : (List<ChipRobot>)ChipRobotFinder.getInstance().getChipFoundList()) {
             robotNameList.add(robot.getName());
-        }
+            if (robot.getName() == dogPref.getString("dogID", " ") && attemptAutoBool.getShowText()) {
+                final ChipRobot connectChipRobot = robot;
+                toDogActivity.this.runOnUiThread(new Runnable() {
+                    public void run() {
+                        connect(connectChipRobot);
+                        // Stop scan Chip
+                        scanLeDevice(false);
+                    }
+                });
+                openAnalyzerActivity();
+                break;
+                }
+            }
+
 
         String[] robotNameArr;
-        if (robotNameList.size() > 0)
+        if (robotNameList.size() > 0){
             robotNameArr = robotNameList.toArray(new String[0]);
+
+        }
         else {
             robotNameArr = new String[1];
             robotNameArr[0] = "Please turn on CHIP";
@@ -317,28 +341,16 @@ public class toDogActivity extends Activity implements ChipRobot.ChipRobotInterf
             return true;
         }
     }
-
-    public void attemptAutoConnect(){
-        if (!dogPref.getBoolean("firstConnect",true)) {
-            updateChipList();
-            attemptAutoBool.setChecked(true);
-            textView.setText("Attempting Autoconnect to: " + dogPref.getString("dogID",""));
-            for (ChipRobot autoRobot : (List<ChipRobot>) ChipRobotFinder.getInstance().getChipFoundList()){
-                    autoRobot.setName(dogPref.getString("dogID"," "));
-                        final ChipRobot defaultChipRobot = autoRobot;
-                        toDogActivity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                connect(defaultChipRobot);
-                                scanLeDevice(false);
-                            }
-                        });
-                        openAnalyzerActivity();
-                        finish();
-                        break;
-                }
-             }
+    public void refreshConnection(){
+        dogEdit.putBoolean("firstConnect",true);
+        dogEdit.putString("dogID"," ");
+        dogEdit.commit();
+        ChipRobotFinder.getInstance().clearFoundChipList();
+        scanLeDevice(false);
+        updateChipList();
+        scanLeDevice(true);
     }
+
 
     }
 

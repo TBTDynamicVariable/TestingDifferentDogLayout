@@ -545,7 +545,6 @@ class AnalyzerViews extends Activity {
                 activity.rewardDog();
             }
 
-
     }}
 
 
