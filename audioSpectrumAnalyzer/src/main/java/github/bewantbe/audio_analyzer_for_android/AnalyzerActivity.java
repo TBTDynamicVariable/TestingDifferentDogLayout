@@ -759,7 +759,7 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         // Start sampling
         samplingThread = new SamplingLoop(this, _analyzerParam);
         samplingThread.start();
-        handler.postDelayed(runnableCode,5000);
+        handler.postDelayed(runnableCode,1000);
 
         //put reward dog logic here
 
@@ -1000,23 +1000,40 @@ public class AnalyzerActivity extends Activity          // AnalyzerActivity is d
         }}
 
     private Handler handler = new Handler();
-    BluetoothRobot robot;
+    boolean stop = false;
     //repetitive task that should check to see if dog is connected. if not display alert
     private Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
 
-/*
-            if (robot.kBluetoothRobotState) { //kBluetoothRobotState in Bluetooth robot says whether or not it's connected
-              openDialog();
+            if (ChipRobotFinder.getInstance().getChipRobotConnectedList().size() == 0)
+            {
+                opentoDogActivity();
+                finish();
+                stop=true;
+                //handler.removeCallbacks(runnableCode);
             }
-            handler.postDelayed(this, 5000);*/
+            else{}
+
+            if(!stop){handler.postDelayed(this, 1000);}
+
+
+
         }
     };
 
+    public void opentoDogActivity(){
+        Intent intent = new Intent(this,toDogActivity.class);
+        startActivity(intent);
+    }
+
+
+    //might not use this
     public void openDialog() {
         AlertDialog alertDialog = new AlertDialog();
         alertDialog.setShowsDialog(true);
 
     }
+
+
 }
